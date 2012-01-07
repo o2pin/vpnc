@@ -1,0 +1,352 @@
+vpnc (0.5.3r449-2.2) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Bug fix: "more verbose iproute makes vpnc fail connecting", taken from
+    http://git.infradead.org/users/dwmw2/vpnc-scripts.git/commitdiff/4deaaf9a32
+    Closes: #624203, #640978, LP: #805435.
+
+ -- Florian Schlichting <fschlich@zedat.fu-berlin.de>  Thu, 24 Nov 2011 15:06:35 +0000
+
+vpnc (0.5.3r449-2.1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Bug fix: "Disconnects after an hour and loops trying to reconnect",
+    thanks to Daniel Schepler (Closes: #496718, LP: #479632). Patch taken
+    from upstream: http://www.gossamer-threads.com/lists/vpnc/devel/3442
+
+ -- Reinhard Tartler <siretart@tauware.de>  Tue, 09 Nov 2010 12:03:17 +0100
+
+vpnc (0.5.3r449-2) unstable; urgency=low
+
+  * Add pkg-config build-dependency. (closes: #574715)
+
+ -- Eric Warmenhoven <warmenhoven@debian.org>  Sat, 20 Mar 2010 21:07:07 -0700
+
+vpnc (0.5.3r449-1) unstable; urgency=low
+
+  * New upstream SVN snapshot with GnuTLS support (closes: #513645, #440318)
+  * Change resolvconf from "Recommends" to "Suggests (closes: #519947)
+  * Since /var/run/vpnc is automatically created, no need to have it as
+    part of vpnc.dirs (fixes lintian error)
+
+ -- Eric Warmenhoven <warmenhoven@debian.org>  Wed, 17 Mar 2010 21:09:06 -0700
+
+vpnc (0.5.3-1) unstable; urgency=low
+
+  * New maintainer (closes: #508590)
+  * New upstream release (closes: #506265)
+    + fixes bug in pcf2vpnc which causes too many spaces (closes: #456550)
+    + fixes prompting for password even though it's in the configuration
+      file (closes: #492981) 
+
+ -- Eric Warmenhoven <warmenhoven@debian.org>  Mon, 15 Dec 2008 17:52:20 -0800
+
+vpnc (0.5.1r334-1) unstable; urgency=low
+
+  * New upstream SVN snapshot with various bugfixes
+  * removed the warning section from our manpage patch, was adopted upstream
+    (closes: 469865)
+
+ -- Eduard Bloch <blade@debian.org>  Sat, 19 Jul 2008 01:18:36 +0200
+
+vpnc (0.5.1r275-1) unstable; urgency=low
+
+  * New upstream SVN snapshot with various bugfixes
+  * A very very very very urgent "fix" from Nicolas Duboc to put cisco-decrypt
+    into /usr/lib/vpnc (closes: #454236)
+
+ -- Eduard Bloch <blade@debian.org>  Sun, 23 Dec 2007 15:42:52 +0100
+
+vpnc (0.5.1r254-1) unstable; urgency=low
+
+  * New upstream release (with updates from trunk)
+    + removes bash specific function keyword (closes: #441045, #444859)
+  * adding cisco-decrypt to vpnc tool (closes: #444631)
+
+ -- Eduard Bloch <blade@debian.org>  Thu, 18 Oct 2007 09:42:08 +0200
+
+vpnc (0.5.0-1) unstable; urgency=low
+
+  * New upstream release
+    + lots of add-ons and fixes moved into official source
+    + Dead Peer Detection improvements (closes: #416180)
+    + Fixes in net-tools usage (closes: #430799)
+    + unsuccessfull error code on authentication failure (closes: #414437)
+  * put resolvconf and iproute into Recommends
+
+ -- Eduard Bloch <blade@debian.org>  Thu, 30 Aug 2007 20:51:37 +0200
+
+vpnc (0.4.0-3) unstable; urgency=low
+
+  * 06_stolen_from_head.dpatch: sync with SVN revision 174, including fixes
+    for DPD (closes: #416180) and also most likely solves the keepalive
+    problems (closes: #418906, reopen if not)
+  * 04_debianitis.dpatch: ifconfig call with full path (closes: 423146)
+
+ -- Eduard Bloch <blade@debian.org>  Wed, 23 May 2007 22:45:46 +0200
+
+vpnc (0.4.0-2) unstable; urgency=medium
+
+  * proper increment variable picking when emulating Target networks
+    directive (closes: #412784)
+  * small bug in resolv.conf update forbidding directive handling fixed,
+    it was causing unuseable resolv.conf in certain cases
+  * 06_stolen_from_head.dpatch: upstream fixes in Revision 159
+    (closes: #411668)
+
+ -- Eduard Bloch <blade@debian.org>  Sun, 11 Mar 2007 18:48:27 +0100
+
+vpnc (0.4.0-1) unstable; urgency=low
+
+  * New upstream release
+    + GNU/kFreeBSD related fixes (closes: #400740)
+    + Supports phase2 rekeying (closes: #411108)
+    + auto-creating /var/run/vpnc (closes: #403783)
+  * Old config handling extensions replaced with wrappers to upstream
+    vpnc-script function variables which are declared official now
+    (closes: #399131)
+  * more connect/shutdown hooks (closes: #366257)
+  * not depending on iproute, though old extensions may not work without it
+    but users are warned in that case (closes: #393848)
+
+ -- Eduard Bloch <blade@debian.org>  Mon, 19 Feb 2007 22:33:12 +0100
+
+vpnc (0.3.3+SVN20051028-3) unstable; urgency=low
+
+  * 08_keepalive_and_rekeying.dpatch: patch for basic rekeying and keepalive
+    support from Tomas Mraz <tmraz@redhat.com>
+  * stronger permissions of /etc/vpnc/ and /etc/vpnc/example.conf to protect
+    careless users from making their login data world-readable 
+    (closes: #340105)
+  * documented connect/disconnect hooks in README.Debian, thanks to Elmar
+    Hoffmann (closes: #360704)
+
+ -- Eduard Bloch <blade@debian.org>  Fri, 14 Apr 2006 23:30:36 +0200
+
+vpnc (0.3.3+SVN20051028-2) unstable; urgency=low
+
+  * TARGET_NETWORKS code was accidentaly removed in 04_debianitis.dpatch, now
+    restored (closes: #336532)
+
+ -- Eduard Bloch <blade@debian.org>  Wed, 02 Nov 2005 09:07:12 +0100
+
+vpnc (0.3.3+SVN20051028-1) unstable; urgency=low
+
+  * new upstream snapshot
+    + includes a password string deobfuscater
+    + a bash specific loop construct has been rewritten (closes: #335989)
+  * inserts another default default value into setup variables (now 
+    really closes: #334203, #335518)
+  * fallback to $configname.conf file scheme (closes: #335383)
+  * vpnc-script tries to open the device for 10 seconds after the module has
+    been loaded, to work around udev's timing problems (closes: #281663)
+
+ -- Eduard Bloch <blade@debian.org>  Fri, 28 Oct 2005 16:08:00 +0200
+
+vpnc (0.3.3+SVN20050909-5) unstable; urgency=low
+
+  * set the default string "No" for DNS_UPDATE (closes: #334699)
+  * do not see any additional routes sent by the server when the
+    TARGET_NETWORKS is set (closes: #334203)
+
+ -- Eduard Bloch <blade@debian.org>  Thu, 13 Oct 2005 22:14:39 +0200
+
+vpnc (0.3.3+SVN20050909-4) unstable; urgency=low
+
+  * added the magic [ words to the test commands in the new hooks 
+    (closes: #333813)
+ 
+ -- Eduard Bloch <blade@debian.org>  Thu, 13 Oct 2005 12:47:15 +0200
+
+vpnc (0.3.3+SVN20050909-3) unstable; urgency=low
+
+  * this should be the "good third revision" of 0.3.3 (closes: #314941)
+  * correct fixes for the DNSUpdate option check (for every corner case) and
+    patch merge errors in the TARGET_NETWORKS execution (closes: #333312)
+  * added a hook to vpnc-script to execute
+    /etc/vpnc/vpnc-script-disconnect-action on disconnect, if found. Create it
+    or even modify vpnc-script as needed. (closes: #254032)
+  * also added a hook for /etc/vpnc/vpnc-script-disconnect-action to add
+    custom stuff there (closes: #299472)
+
+ -- Eduard Bloch <blade@debian.org>  Thu, 13 Oct 2005 12:43:23 +0200
+
+vpnc (0.3.3+SVN20050909-2) unstable; urgency=low
+
+  * fixed typo in vpnc-script patch which was causing the resolv.conf update
+    though disabled in the config
+
+ -- Eduard Bloch <blade@debian.org>  Wed, 12 Oct 2005 01:11:44 +0200
+
+vpnc (0.3.3+SVN20050909-1) unstable; urgency=low
+
+  * New upstream release
+    + all functionality of vpnc-connect moved to vpnc and vpnc-script
+  * migrated additional vpnc-connect functionality (resolvconf, Target
+    Networks, DNSUpdate options) to vpnc-script and vpnc source
+  * set transitional symlink vpnc-connect (-> vpnc)
+  * reduced default MTU to 1390 to work around problems seen while testing
+
+ -- Eduard Bloch <blade@debian.org>  Mon, 10 Oct 2005 12:22:42 +0200
+
+vpnc (0.3.2+SVN20050326-2) unstable; urgency=high
+
+  * added a check for having a slash in the config file specification (now it
+    really accepts absolute paths only and not some random, or even malicious,
+    script from the current directory). Before, it was like having "." on the
+    first place in root's $PATH.
+  * also reverted the vpnc binary lookup order to limit possible effects of
+    a similar problem
+
+ -- Eduard Bloch <blade@debian.org>  Thu, 05 May 2005 19:39:05 +0200
+
+vpnc (0.3.2+SVN20050326-1) unstable; urgency=low
+
+  * New upstream SVN snapshot
+    + reported to solve 64bit problems (closes: #282732)
+
+ -- Eduard Bloch <blade@debian.org>  Sat, 26 Mar 2005 10:58:35 +0100
+
+vpnc (0.3.2+SVN20041123-1) unstable; urgency=low
+
+  * New upstream release and update
+  * Changed the example gateway IP to one from the official example net
+  * do not try to run modprobe if there is no module support (closes: #281606)
+
+ -- Eduard Bloch <blade@debian.org>  Tue, 23 Nov 2004 18:43:43 +0100
+
+vpnc (0.3.1-1) unstable; urgency=low
+
+  * New upstream release
+  * removed Interface name from the example config file - upstream request,
+    too many users tried to use this on kernel 2.2 :(
+  * added $@ to the vpnc call in vpnc-connect (closes: #274202)
+  * added /sbin to the PATH to reach ifconfig (closes: #278049)
+
+ -- Eduard Bloch <blade@debian.org>  Sat, 13 Nov 2004 15:43:46 +0100
+
+vpnc (0.2-rm+zomb.1-8) unstable; urgency=low
+
+  * Rebuilt for libgcrypt11
+
+ -- Eduard Bloch <blade@debian.org>  Thu, 17 Jun 2004 16:37:41 +0200
+
+vpnc (0.2-rm+zomb.1-7) unstable; urgency=low
+
+  * pre-release upstream update
+    + keeping the same syslog facility after fork (closes: #251228)
+    + insecurity warnings in README.Debian and vpnc.8 (closes: #251935)
+    + general PIX support was added in the previous release (closes: #220233)
+  * changes to use dpatch
+  * upstream TODO file re-added (closes: #254034)
+  * patch from Wolfgang Ratzka to add direct gateway route even if Target
+    networks is set (closes: #253051)
+
+ -- Eduard Bloch <blade@debian.org>  Wed, 26 May 2004 16:57:52 +0200
+
+vpnc (0.2-rm+zomb.1-6) unstable; urgency=low
+
+  * Made checks for tun_init be less precise to match on kernel 2.4
+
+ -- Eduard Bloch <blade@debian.org>  Wed, 26 May 2004 16:16:16 +0200
+
+vpnc (0.2-rm+zomb.1-5) unstable; urgency=low
+
+  * Fix of the fix of the last tree RC bugs, also use the right command [tm]
+    to display the help text, thanks to Michael Farmbauer (closes: #250839)
+  * More alternative checks for the tun driver presence
+
+ -- Eduard Bloch <blade@debian.org>  Mon, 24 May 2004 18:12:05 +0200
+
+vpnc (0.2-rm+zomb.1-4) unstable; urgency=low
+
+  * Moved the config file argument into the quotes when specifying the
+    configuration script argument (closes: #250695, #250673, #240766)
+  * installing example config file into /etc/vpnc/ (closes: #246714)
+  * checking $1 before shift to not confuse dash
+  * made vpnc-connect be quiet if CONFIG_TUN=y was found in the guessed kernel
+    config file (closes: #250237)
+
+ -- Eduard Bloch <blade@debian.org>  Mon, 17 May 2004 17:55:22 +0200
+
+vpnc (0.2-rm+zomb.1-3) unstable; urgency=low
+
+  * the third-time-lucky revision
+  * removed surrounding quotes in the DNS server list
+
+ -- Eduard Bloch <blade@debian.org>  Sat, 15 May 2004 21:31:15 +0200
+
+vpnc (0.2-rm+zomb.1-2) unstable; urgency=low
+
+  * vpnc.c: Only warn about additional ("unknown") config directives in 
+    debug mode (as it was done in -pre8 before)
+  * vpnc-connect: adding explicite routes to VPNed DNS servers if needed
+  * avoiding multi-line if-statements, report to break with some shell
+
+ -- Eduard Bloch <blade@debian.org>  Fri, 14 May 2004 15:18:52 +0200
+
+vpnc (0.2-rm+zomb.1-1) unstable; urgency=low
+
+  * New upstream release
+  * resolvconf integration to implement DNS data update mechanism
+
+ -- Eduard Bloch <blade@debian.org>  Fri, 14 May 2004 09:04:26 +0200
+
+vpnc (0.2-rm+zomb-pre8-1) unstable; urgency=low
+
+  * New upstream release
+  * added Interface name to the manpage example and a default value to the
+    vpnc-connect script
+
+ -- Eduard Bloch <blade@debian.org>  Sun, 25 Apr 2004 10:56:01 +0200
+
+vpnc (0.2-rm+zomb-pre7-4) unstable; urgency=low
+
+  * Multiple config management patch by Tobias Oetiker <oetiker@ee.ethz.ch>
+  * Manpage updates based on the patch above
+  * Fixed the route check on the defaultroute restoring (thanks to Thomas
+    Deselaers, closes: #230806)
+
+ -- Eduard Bloch <blade@debian.org>  Thu, 29 Jan 2004 11:06:00 +0100
+
+vpnc (0.2-rm+zomb-pre7-3) unstable; urgency=low
+
+  * Does not clobber the default route if custom routes have been defined
+    (successor of the #225776 fix), thanks to Steven Ihde (closes: #230201)
+
+ -- Eduard Bloch <blade@debian.org>  Wed, 28 Jan 2004 20:23:10 +0100
+
+vpnc (0.2-rm+zomb-pre7-2) unstable; urgency=low
+
+  * vpnc-connect: allow customizable target routes in vpnc.conf 
+    (closes: #225776)
+  * vpnc.c: don't bother about unknown options unless --debug is used
+  * merged relevant parts of the FreeBSD manpage Debian into out Linux
+    version, replaced hyphens with minus signs (\-) and stopped using the SGML
+    template. It just sucked.
+
+ -- Eduard Bloch <blade@debian.org>  Thu, 18 Dec 2003 21:14:11 +0100
+
+vpnc (0.2-rm+zomb-pre7-1) unstable; urgency=low
+
+  * New upstream release
+    + vpnc-connect filters weird ip output (closes: #220495)
+  * Builds with the new libgcrypt generation, Build-Deps adjusted
+  * Typo in description fixed (closes: #220172)
+
+ -- Eduard Bloch <blade@debian.org>  Thu, 18 Dec 2003 20:28:02 +0100
+
+vpnc (0.2-rm+zomb-pre5-2) unstable; urgency=low
+
+  * Fixed the test condition when looking for the tun device node
+  * vpnc.c: fixed --local-port description
+  * provisoric manpage written
+
+ -- Eduard Bloch <blade@debian.org>  Mon,  3 Nov 2003 22:41:04 +0100
+
+vpnc (0.2-rm+zomb-pre5-1) unstable; urgency=low
+
+  * Initial Release (closes: #217838)
+
+ -- Eduard Bloch <blade@debian.org>  Thu, 30 Oct 2003 07:08:26 +0100
+

@@ -1,0 +1,24 @@
+This package was debianized by Eduard Bloch <blade@debian.org> on
+Mon, 27 Oct 2003 20:05:37 +0100.
+
+It was downloaded from http://www.unix-ag.uni-kl.de/~massar/vpnc/.
+
+Upstream Authors:
+
+Copyright © 2002, Geoffrey Keating <geoffk@geoffk.org>
+Copyright © 2003-2008, Maurice Massar <massar@unix-ag.uni-kl.de>
+Copyright © 2007-2008, Joerg Mayer <jmayer@loplof.de>
+
+License:
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or (at
+your option) any later version.
+
+You can find the complete text of the GPLv2 in the file
+/usr/share/common-licenses/GPL-2 on Debian systems.
+
+The source code contains parts of the isakmpd package which are licensed
+under the BSD license, refer to /usr/share/common-license/BSD for
+details.

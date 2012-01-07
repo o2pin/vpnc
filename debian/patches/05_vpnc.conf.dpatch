@@ -1,0 +1,50 @@
+#! /bin/sh -e
+## 05_vpnc.conf.dpatch by Eduard Bloch <blade@debian.org>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: No description.
+
+if [ $# -lt 1 ]; then
+    echo "`basename $0`: script expects -patch|-unpatch as argument" >&2
+    exit 1
+fi
+
+[ -f debian/patches/00patch-opts ] && . debian/patches/00patch-opts
+patch_opts="${patch_opts:--f --no-backup-if-mismatch} ${2:+-d $2}"
+
+case "$1" in
+    -patch) patch -p1 ${patch_opts} < $0;;
+    -unpatch) patch -R -p1 ${patch_opts} < $0;;
+    *)
+        echo "`basename $0`: script expects -patch|-unpatch as argument" >&2
+        exit 1;;
+esac
+
+exit 0
+
+@DPATCH@
+diff -urNad vpnc/vpnc.conf /tmp/dpep.fwDvsW/vpnc/vpnc.conf
+--- vpnc/vpnc.conf	2004-11-13 16:00:17.000000000 +0100
++++ /tmp/dpep.fwDvsW/vpnc/vpnc.conf	2004-11-23 19:00:49.000000000 +0100
+@@ -1,4 +1,17 @@
+-IPSec gateway 131.246.118.240
+-IPSec ID unikl
+-IPSec secret unikl
+-Xauth username abcdef
++IPSec gateway 192.0.2.32
++IPSec ID myGroup
++IPSec secret myGroupPWD
++Xauth username myUserName
++
++# OPTIONAL
++# ========
++
++#
++#
++# Varios options not undestood by vpnc itself but by some other scripts
++#
++# Target networks 123.234.210.0/24 10.1.0.0/16
++# If Target networks is defined here, the default route is not replaced!
++
++# Don't update resolv.conf though resolvconf is installed
++# DNSUpdate no

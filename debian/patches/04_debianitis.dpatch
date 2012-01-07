@@ -1,0 +1,192 @@
+#!/bin/sh /usr/share/dpatch/dpatch-run
+## 04_debianitis.dpatch by Eduard Bloch <blade@debian.org>
+##
+
+@DPATCH@
+diff -urNad vpnc~/config.c vpnc/config.c
+--- vpnc~/config.c	2008-07-19 01:18:33.000000000 +0200
++++ vpnc/config.c	2008-07-19 01:32:50.000000000 +0200
+@@ -191,6 +191,16 @@
+ 	return "0.0.0.0/0.0.0.0";
+ }
+ 
++static const char *config_def_networks_list(void)
++{
++	return "";
++}
++
++static const char *config_def_dns_update(void)
++{
++	return "Yes";
++}
++
+ static const struct config_names_s {
+ 	enum config_enum nm;
+ 	const int needsArgument;
+@@ -447,7 +457,27 @@
+ 		"<target network/netmask>",
+ 		"Target network in dotted decimal or CIDR notation\n",
+ 		config_def_target_network
+-	}, {
++	}, 
++     {
++        CONFIG_DNS_UPDATE, 1, 1,
++        "--dns-update",
++        "DNSUpdate",
++        "",
++        "DEPRECATED extension, see README.Debian for details",
++        config_def_dns_update
++     }, 
++ 
++     {
++        CONFIG_TARGET_NETWORKS, 1, 1,
++        "--target-networks",
++        "Target Networks",
++        NULL,
++        "DEPRECATED extension, see README.Debian for details",
++        config_def_networks_list
++     }, 
++ 
++ 
++    {
+ 		0, 0, 0, NULL, NULL, NULL, NULL, NULL
+ 	}
+ };
+diff -urNad vpnc~/config.h vpnc/config.h
+--- vpnc~/config.h	2008-07-19 01:18:33.000000000 +0200
++++ vpnc/config.h	2008-07-19 01:31:15.000000000 +0200
+@@ -58,6 +58,11 @@
+ 	CONFIG_AUTH_MODE,
+ 	CONFIG_CA_FILE,
+ 	CONFIG_CA_DIR,
++
++
++  CONFIG_DNS_UPDATE,
++  CONFIG_TARGET_NETWORKS,
++
+ 	LAST_CONFIG
+ };
+ 
+diff -urNad vpnc~/pcf2vpnc vpnc/pcf2vpnc
+--- vpnc~/pcf2vpnc	2008-07-19 01:18:33.000000000 +0200
++++ vpnc/pcf2vpnc	2008-07-19 01:31:15.000000000 +0200
+@@ -24,6 +24,8 @@
+ use strict;
+ use warnings;
+ 
++$ENV{"PATH"}.=":/usr/lib/vpnc";
++
+ my %authmode = ( 1 => 'psk', 3 => 'cert', 5 => 'hybrid' );
+ my $needs_cert = 0;
+ my $no_decrypt = 0;
+diff -urNad vpnc~/vpnc-script.in vpnc/vpnc-script.in
+--- vpnc~/vpnc-script.in	2008-07-19 01:18:33.000000000 +0200
++++ vpnc/vpnc-script.in	2008-07-19 01:31:15.000000000 +0200
+@@ -402,8 +402,9 @@
+ 		else # can't open /dev/net/tun
+ 			test -e /proc/sys/kernel/modprobe && `cat /proc/sys/kernel/modprobe` tun 2>/dev/null
+ 			# fix for broken devfs in kernel 2.6.x
+-			if [ "`readlink /dev/net/tun`" = misc/net/tun \
+-				-a ! -e /dev/net/misc/net/tun -a -e /dev/misc/net/tun ] ; then
++      if [ "`readlink /dev/net/tun`" = misc/net/tun ] && \
++                [ ! -e /dev/net/misc/net/tun ] && \
++                [ -e /dev/misc/net/tun ] ; then
+ 				ln -sf /dev/misc/net/tun /dev/net/tun
+ 			fi
+ 			# make sure tun device exists
+@@ -439,6 +440,27 @@
+ }
+ 
+ do_connect() {
++      # Debian specific, insert your code there to avoid modification of
++      # conffiles like this script
++      if [ -r /etc/vpnc/vpnc-script-connect-action ] ; then
++	 . /etc/vpnc/vpnc-script-connect-action
++      fi
++      # backwards compatibility mapping for old extensions
++      if test "$TARGET_NETWORKS" ; then
++	 i=0
++	 for network in $TARGET_NETWORKS ; do
++	    eval CISCO_SPLIT_INC_${i}_ADDR=`echo $network | cut -f1 -d/`
++	    eval CISCO_SPLIT_INC_${i}_MASKLEN=`echo $network | cut -f2 -d/`
++	    eval CISCO_SPLIT_INC_${i}_MASK=$( perl -e '$ARGV[0]=~s,.*/,,;$m=(2**$ARGV[0]-1)<<(32-$ARGV[0]);printf "%d.%d.%d.%d\n", $m>>24 & 0xff, $m>>16 & 0xff, $m>>8 & 0xff, $m & 0xff;' $network )
++	    eval CISCO_SPLIT_INC_${i}_PROTOCOL=0
++	    eval CISCO_SPLIT_INC_${i}_SPORT=0
++	    eval CISCO_SPLIT_INC_${i}_DPORT=0
++	    i=`expr $i + 1`
++	 done
++	 CISCO_SPLIT_INC=$i
++      fi
++      ## end Debian specific
++
+ 	if [ -n "$CISCO_BANNER" ]; then
+ 		echo "Connect Banner:"
+ 		echo "$CISCO_BANNER" | while read LINE ; do echo "|" "$LINE" ; done
+@@ -466,13 +488,31 @@
+ 	else
+ 		set_default_route
+ 	fi
+-
+-	if [ -n "$INTERNAL_IP4_DNS" ]; then
+-		$MODIFYRESOLVCONF
++
++	case "$DNS_UPDATE" in
++	   *no|*NO|*No|*nO)
++	   ;;
++	   *)
++	   if [ -n "$INTERNAL_IP4_DNS" ]; then
++	      $MODIFYRESOLVCONF
++	   fi
++	   ;;
++	esac
++
++	if [ -r /etc/vpnc/vpnc-script-post-connect-action ] ; then
++	   . /etc/vpnc/vpnc-script-post-connect-action
+ 	fi
++
+ }
+ 
+ do_disconnect() {
++
++	# Debian specific, insert your code there to avoid modification of
++	# conffiles like this script
++	if [ -r /etc/vpnc/vpnc-script-disconnect-action ] ; then
++	   . /etc/vpnc/vpnc-script-disconnect-action
++	fi
++
+ 	if [ -n "$CISCO_SPLIT_INC" ]; then
+ 		i=0
+ 		while [ $i -lt $CISCO_SPLIT_INC ] ; do
+@@ -497,8 +537,17 @@
+ 
+ 	del_vpngateway_route
+ 
+-	if [ -n "$INTERNAL_IP4_DNS" ]; then
+-		$RESTORERESOLVCONF
++	case "$DNS_UPDATE" in
++	   *no|*NO|*No|*nO)
++	   ;;
++	   *)
++	   if [ -n "$INTERNAL_IP4_DNS" ]; then
++	      $RESTORERESOLVCONF
++	   fi
++	   ;;
++	esac
++	if [ -r /etc/vpnc/vpnc-script-post-disconnect-action ] ; then
++	   . /etc/vpnc/vpnc-script-post-disconnect-action
+ 	fi
+ 	destroy_tun_device
+ }
+diff -urNad vpnc~/vpnc.c vpnc/vpnc.c
+--- vpnc~/vpnc.c	2008-07-19 01:18:33.000000000 +0200
++++ vpnc/vpnc.c	2008-07-19 01:31:15.000000000 +0200
+@@ -355,6 +355,9 @@
+ {
+ 	setenv("VPNGATEWAY", inet_ntoa(s->dst), 1);
+ 	setenv("reason", "connect", 1);
++   // DEPRECATED, Debian specific
++   setenv("DNS_UPDATE", config[CONFIG_DNS_UPDATE], 1);
++   setenv("TARGET_NETWORKS", config[CONFIG_TARGET_NETWORKS], 1);
+ 	system(config[CONFIG_SCRIPT]);
+ }
+ 
