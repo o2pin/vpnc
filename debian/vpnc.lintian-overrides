@@ -1,0 +1,3 @@
+# restrictive permissions to protect password in config file
+vpnc: non-standard-dir-perm etc/vpnc/ 0700 != 0755
+vpnc: non-standard-file-perm etc/vpnc/default.conf 0600 != 0644
