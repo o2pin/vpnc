@@ -10,6 +10,7 @@ override_dh_auto_build:
  
 override_dh_auto_install:
 	dh_auto_install -- PREFIX=${PREFIX} install
+	rm ./debian/vpnc/usr/share/doc/vpnc/COPYING
 
 override_dh_fixperms:
 	dh_fixperms
