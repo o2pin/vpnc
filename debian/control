@@ -3,7 +3,7 @@ Section: net
 Priority: extra
 Maintainer: Florian Schlichting <fschlich@zedat.fu-berlin.de>
 Build-Depends: debhelper (>= 8), libgnutls-dev, pkg-config
-Standards-Version: 3.8.4.0
+Standards-Version: 3.9.2
 Homepage: http://www.unix-ag.uni-kl.de/~massar/vpnc/
 
 Package: vpnc
