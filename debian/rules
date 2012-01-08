@@ -1,104 +1,12 @@
 #!/usr/bin/make -f
-# -*- makefile -*-
-# Sample debian/rules that uses debhelper.
-# GNU copyright 1997 to 1999 by Joey Hess.
 
-# Uncomment this to turn on verbose mode.
-#export DH_VERBOSE=1
+PREFIX=/usr
 
-include /usr/share/dpatch/dpatch.make
+%:
+	dh $@
 
-CFLAGS = -Wall -g
-
-ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
-	CFLAGS += -O0
-else
-	CFLAGS += -O2
-endif
-ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
-	INSTALL_PROGRAM += -s
-endif
-
-configure: configure-stamp
-configure-stamp:
-	dh_testdir
-	# Add here commands to configure the package.
-
-	touch configure-stamp
-
-
-build: build-stamp
-
-build-stamp: configure-stamp patch
-	dh_testdir
-
-	# Add here commands to compile the package.
-	$(MAKE)
-	#/usr/bin/docbook-to-man debian/vpnc.sgml > vpnc.1
-
-	touch build-stamp
-
-clean: unpatch
-	dh_testdir
-	dh_testroot
-	rm -f build-stamp configure-stamp
-
-	# Add here commands to clean up after the build process.
-	$(MAKE) distclean || true
-
-	dh_clean 
-
-install: build
-	dh_testdir
-	dh_testroot
-	dh_clean -k 
-	dh_installdirs
-
-	# Add here commands to install the package into debian/vpnc.
-	cp vpnc vpnc-disconnect debian/vpnc/usr/sbin/
-	install -m755 pcf2vpnc debian/vpnc/usr/share/vpnc/
-	install -m755 cisco-decrypt debian/vpnc/usr/lib/vpnc/
-	install -D -m600 vpnc.conf   debian/vpnc/etc/vpnc/example.conf
-	install -D -m755 vpnc-script debian/vpnc/etc/vpnc/vpnc-script
-	chmod 700 debian/vpnc/etc/vpnc
-
-# Build architecture-independent files here.
-binary-indep: build install
-# We have nothing to do by default.
-
-# Build architecture-dependent files here.
-binary-arch: build install
-	dh_testdir
-	dh_testroot
-	dh_installchangelogs
-	dh_installdocs
-	dh_installexamples
-	dh_link -pvpnc /usr/sbin/vpnc /usr/sbin/vpnc-connect
-#	dh_install
-#	dh_installmenu
-#	dh_installdebconf	
-#	dh_installlogrotate
-#	dh_installemacsen
-#	dh_installpam
-#	dh_installmime
-#	dh_installinit
-#	dh_installcron
-#	dh_installinfo
-	dh_installman vpnc.8
-	ln -sf vpnc.8.gz debian/vpnc/usr/share/man/man8/vpnc-connect.8.gz
-	ln -sf vpnc.8.gz debian/vpnc/usr/share/man/man8/vpnc-disconnect.8.gz
-	dh_link
-	dh_strip
-	dh_compress
-	dh_fixperms -X/etc/vpnc
-#	dh_perl
-#	dh_python
-#	dh_makeshlibs
-	dh_installdeb
-	dh_shlibdeps
-	dh_gencontrol
-	dh_md5sums
-	dh_builddeb
-
-binary: binary-indep binary-arch
-.PHONY: build clean binary-indep binary-arch binary install configure
+override_dh_auto_build:
+	dh_auto_build -- PREFIX=${PREFIX}
+ 
+override_dh_auto_install:
+	dh_auto_install -- PREFIX=${PREFIX} install

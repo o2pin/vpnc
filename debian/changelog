@@ -1,6 +1,7 @@
 vpnc (0.5.3r449-3) unstable; urgency=low
 
   * New maintainer.
+  * Use source "3.0 (quilt)", dh 8 and minimal debian/rules.
 
  -- Florian Schlichting <fschlich@zedat.fu-berlin.de>  Sun, 08 Jan 2012 01:20:33 +0100
 
