@@ -1,10 +1,6 @@
-#! /bin/sh /usr/share/dpatch/dpatch-run
-## 08_bug640978.dpatch by Florian Schlichting <fschlich@zedat.fu-berlin.de>
-##
-## All lines beginning with `## DP:' are a description of the patch.
-## DP: more verbose iproute makes vpnc fail connecting
-
-@DPATCH@
+Description: fix RC bug 640978: "more verbose iproute makes vpnc fail connecting"
+Author: Florian Schlichting <fschlich@zedat.fu-berlin.de>
+Forwarded: no
 
 diff --git a/vpnc-script.in b/vpnc-script.in
 index 59750d0..bd4f120 100755

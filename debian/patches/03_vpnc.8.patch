@@ -1,28 +1,8 @@
-#! /bin/sh -e
-## 03_vpnc.8.dpatch by Eduard Bloch <blade@debian.org>
-##
-## All lines beginning with `## DP:' are a description of the patch.
-## DP: No description.
+Description: Add "ADVANCED USAGE" paragraph to vpnc(8) manpage
+ These are extra features added by Debian.
+Author: Eduard Bloch <blade@debian.org>
+Forwarded: no
 
-if [ $# -lt 1 ]; then
-    echo "`basename $0`: script expects -patch|-unpatch as argument" >&2
-    exit 1
-fi
-
-[ -f debian/patches/00patch-opts ] && . debian/patches/00patch-opts
-patch_opts="${patch_opts:--f --no-backup-if-mismatch} ${2:+-d $2}"
-
-case "$1" in
-    -patch) patch -p1 ${patch_opts} < $0;;
-    -unpatch) patch -R -p1 ${patch_opts} < $0;;
-    *)
-        echo "`basename $0`: script expects -patch|-unpatch as argument" >&2
-        exit 1;;
-esac
-
-exit 0
-
-@DPATCH@
 diff -urNad vpnc-0.5.1r254~/vpnc.8.template vpnc-0.5.1r254/vpnc.8.template
 --- vpnc-0.5.1r254~/vpnc.8.template	2007-10-18 09:42:04.000000000 +0200
 +++ vpnc-0.5.1r254/vpnc.8.template	2007-10-18 09:44:36.000000000 +0200
@@ -31,7 +11,7 @@ diff -urNad vpnc-0.5.1r254~/vpnc.8.template vpnc-0.5.1r254/vpnc.8.template
  vpnc package.
  
 +.SH ADVANCED USAGE
-+The vpnc-connect stript shipped with Debian has some additional
++The vpnc-connect script shipped with Debian has some additional
 +features:
 +.IP "Custom route setting"
 +By default, the default route is deleted after connection and replaced

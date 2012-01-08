@@ -1,8 +1,7 @@
-#!/bin/sh /usr/share/dpatch/dpatch-run
-## 04_debianitis.dpatch by Eduard Bloch <blade@debian.org>
-##
+Description: "Debian specific" changes: DNS_UPDATE, TARGET_NETWORKS, /etc/vpnc/vpnc-script-post-[dis]connect-action
+Author: Eduard Bloch <blade@debian.org>
+Forwarded: no
 
-@DPATCH@
 diff -urNad vpnc~/config.c vpnc/config.c
 --- vpnc~/config.c	2008-07-19 01:18:33.000000000 +0200
 +++ vpnc/config.c	2008-07-19 01:32:50.000000000 +0200

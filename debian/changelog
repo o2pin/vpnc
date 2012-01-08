@@ -3,6 +3,7 @@ vpnc (0.5.3r449-3) unstable; urgency=low
   * New maintainer.
   * Use source "3.0 (quilt)", dh 8 and minimal debian/rules.
     + Converted patch system from dpatch to quilt.
+    + Added DEP-3 headers and refreshed 07_bug496718.patch.
 
  -- Florian Schlichting <fschlich@zedat.fu-berlin.de>  Sun, 08 Jan 2012 01:20:33 +0100
 

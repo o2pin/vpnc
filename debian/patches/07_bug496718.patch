@@ -1,38 +1,11 @@
-#! /bin/sh /usr/share/dpatch/dpatch-run
-## 07_bug496718.dpatch by Reinhard Tartler <siretart@tauware.de>
-##
-## All lines beginning with `## DP:' are a description of the patch.
-## DP: Do no disconnect after an hour and loop trying to reconnect
+Description: fix RC bug 496718: "Do no disconnect after an hour and loop trying to reconnect"
+Author: Reinhard Tartler <siretart@tauware.de>
+Forwarded: no
 
-@DPATCH@
 
-Index: vpnc.c
-===================================================================
---- a/vpnc.c	(revision 449)
-+++ b/vpnc.c	(working copy)
-@@ -3095,9 +3097,14 @@
- 			 */
- 			/* FIXME: any cleanup needed??? */
- 
--			free_isakmp_packet(r);
--			do_phase2_qm(s);
--			return;
-+			if (rp->u.d.num_spi >= 1 && memcmp(rp->u.d.spi[0], &s->ipsec.tx.spi, 4) == 0) {
-+				free_isakmp_packet(r);
-+				do_phase2_qm(s);
-+				return;
-+			} else {
-+				DEBUG(2, printf("got isakmp delete with bogus spi, ignoring...\n"));
-+				continue;
-+			}
- 		}
- 		/* skip ipsec-esp delete */
- 		if (rp->u.d.protocol != ISAKMP_IPSEC_PROTO_ISAKMP) {
-Index: vpnc.c
-===================================================================
---- a/vpnc.c	(revision 449)
-+++ b/vpnc.c	(working copy)
-@@ -2779,32 +2779,34 @@
+--- a/vpnc.c
++++ b/vpnc.c
+@@ -2782,32 +2782,34 @@
  		free(dh_shared_secret);
  		free_isakmp_packet(r);
  
@@ -76,13 +49,31 @@ Index: vpnc.c
 -			if (setsockopt(s->esp_fd, IPPROTO_IP, IP_HDRINCL, &hincl, sizeof(hincl)) == -1) {
 -				close_tunnel(s);
 -				error(1, errno, "setsockopt(esp_fd, IPPROTO_IP, IP_HDRINCL, 1)");
+-			}
 +				if (setsockopt(s->esp_fd, IPPROTO_IP, IP_HDRINCL, &hincl, sizeof(hincl)) == -1) {
 +					close_tunnel(s);
 +					error(1, errno, "setsockopt(esp_fd, IPPROTO_IP, IP_HDRINCL, 1)");
 +				}
-+#endif
- 			}
--#endif
+ #endif
++			}
  		}
  
  		s->ipsec.rx.seq_id = s->ipsec.tx.seq_id = 1;
+@@ -3098,9 +3100,14 @@
+ 			 */
+ 			/* FIXME: any cleanup needed??? */
+ 
+-			free_isakmp_packet(r);
+-			do_phase2_qm(s);
+-			return;
++			if (rp->u.d.num_spi >= 1 && memcmp(rp->u.d.spi[0], &s->ipsec.tx.spi, 4) == 0) {
++				free_isakmp_packet(r);
++				do_phase2_qm(s);
++				return;
++			} else {
++				DEBUG(2, printf("got isakmp delete with bogus spi, ignoring...\n"));
++				continue;
++			}
+ 		}
+ 		/* skip ipsec-esp delete */
+ 		if (rp->u.d.protocol != ISAKMP_IPSEC_PROTO_ISAKMP) {
