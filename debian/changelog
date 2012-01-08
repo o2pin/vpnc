@@ -8,6 +8,7 @@ vpnc (0.5.3r449-3) unstable; urgency=low
     default.conf.
   * Install cisco-decrypt and pcf2vpnc into /usr/bin like upstream does,
     increasing visibility.
+  * debian/control: Added Homepage field.
 
  -- Florian Schlichting <fschlich@zedat.fu-berlin.de>  Sun, 08 Jan 2012 01:20:33 +0100
 
