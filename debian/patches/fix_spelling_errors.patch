@@ -1,0 +1,66 @@
+Description: fix spelling errors found by lintian
+Author: Florian Schlichting <fschlich@zedat.fu-berlin.de>
+Forwarded: no
+
+--- a/isakmp-pkt.c
++++ b/isakmp-pkt.c
+@@ -820,7 +820,7 @@
+ 	}
+ 
+ 	DEBUG(3, printf("BEGIN_PARSE\n"));
+-	DEBUG(3, printf("Recieved Packet Len: %d\n", data_len));
++	DEBUG(3, printf("Received Packet Len: %d\n", data_len));
+ 	fetchn(r->i_cookie, ISAKMP_COOKIE_LENGTH);
+ 	hex_dump("i_cookie", r->i_cookie, ISAKMP_COOKIE_LENGTH, NULL);
+ 	fetchn(r->r_cookie, ISAKMP_COOKIE_LENGTH);
+--- a/vpnc.8.template
++++ b/vpnc.8.template
+@@ -95,7 +95,7 @@
+ .I /etc/vpnc/default.conf
+ .RS
+ The default configuration file. You can specify the same config
+-directives as with command line options and additionaly
++directives as with command line options and additionally
+ .B IPSec secret
+ and
+ .B Xauth password
+@@ -176,7 +176,7 @@
+ make sure that files with colliding hashes have different names. The number
+ can be derived from the certificate file itself:
+ .P
+-openssl x509 -subject_hash -noout -in /etc/vpnc/vpn-example-com.pem
++openssl x509 \-subject_hash \-noout \-in /etc/vpnc/vpn\-example\-com.pem
+ 
+ See also the
+ .B \-\-print\-config
+@@ -241,7 +241,7 @@
+ License can be found in /usr/share/common\-licenses/GPL.
+ .SH "SEE ALSO"
+ .BR pcf2vpnc (1),
+-.BR cisco-decrypt (1),
++.BR cisco\-decrypt (1),
+ .BR ip (8),
+ .BR ifconfig (8),
+ .BR route (1),
+--- a/README
++++ b/README
+@@ -92,7 +92,7 @@
+    Note that vpnc will not forward packets anymore while the script is
+    running or therafter.
+ 
+-Information is passed from vpnc via enviroment variables:
++Information is passed from vpnc via environment variables:
+ 
+ #* reason                       -- why this script was called, one of: pre-init connect disconnect
+ #* VPNGATEWAY                   -- vpn gateway address (always present)
+--- a/config.c
++++ b/config.c
+@@ -305,7 +305,7 @@
+ 		"Script ",
+ 		"<command>",
+ 		"command is executed using system() to configure the interface,\n"
+-		"routing and so on. Device name, IP, etc. are passed using enviroment\n"
++		"routing and so on. Device name, IP, etc. are passed using environment\n"
+ 		"variables, see README. This script is executed right after ISAKMP is\n"
+ 		"done, but before tunneling is enabled. It is called when vpnc\n"
+ 		"terminates, too\n",
