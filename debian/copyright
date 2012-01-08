@@ -1,24 +1,53 @@
-This package was debianized by Eduard Bloch <blade@debian.org> on
-Mon, 27 Oct 2003 20:05:37 +0100.
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0
+Source: http://svn.unix-ag.uni-kl.de/vpnc/
+Upstream-Name: vpnc
 
-It was downloaded from http://www.unix-ag.uni-kl.de/~massar/vpnc/.
+Files: *
+Copyright: 1999, Pierre Beyssac
+ 2002, Geoffrey Keating <geoffk@geoffk.org>
+ 2003, Christian Lackas <delta(at)lackas.net>
+ 2003, Damion K. Wilson
+ 2003, Eduard Bloch <blade(at)debian.org>
+ 2003-2008, Maurice Massar <massar@unix-ag.uni-kl.de>
+ 2003-2005, OpenVPN Solutions LLC
+ 2004, Martin von Gagern
+ 2004, Tomas Mraz
+ 2004, Stefan Tomanek <stefan@pico.ruhr.de>
+ 2005, Michael Tilstra
+ 2006, Daniel Roethlisberger
+ 2006-2007, Dan Villiom Podlaski Christiansen
+ 2006-2007, Wolfram Sang <wolfram@the-dreams.de>
+ 2007-2008, Joerg Mayer <jmayer@loplof.de>
+ 2007, Paolo Zarpellon <paolo.zarpellon@gmail.com>
+License: GPL-2+
 
-Upstream Authors:
+Files: dh.* math_group.*
+Copyright: 1998, Niels Provos
+ 1999-2000 Niklas Hallqvist
+License: BSD-2-clause
 
-Copyright © 2002, Geoffrey Keating <geoffk@geoffk.org>
-Copyright © 2003-2008, Maurice Massar <massar@unix-ag.uni-kl.de>
-Copyright © 2007-2008, Joerg Mayer <jmayer@loplof.de>
+Files: debian/*
+Copyright: 2003-2008, Eduard Bloch <blade@debian.org>
+ 2008-2010, Eric Warmenhoven <warmenhoven@debian.org>
+ 2010, Reinhard Tartler <siretart@tauware.de>
+ 2011, Florian Schlichting <fschlich@zedat.fu-berlin.de>
+License: GPL-2+
 
-License:
+License: BSD-2-clause
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions
+ are met:
+ 1. Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or (at
-your option) any later version.
-
-You can find the complete text of the GPLv2 in the file
-/usr/share/common-licenses/GPL-2 on Debian systems.
-
-The source code contains parts of the isakmpd package which are licensed
-under the BSD license, refer to /usr/share/common-license/BSD for
-details.
+License: GPL-2+
+ This program is free software; you can redistribute it and/or modify it
+ under the terms of the GNU General Public License as published by the
+ Free Software Foundation; either version 2, or (at your option) any
+ later version.
+ .
+ On Debian systems, the complete text of version 1 of the GNU General
+ Public License can be found in `/usr/share/common-licenses/GPL-1'.
