@@ -11,6 +11,7 @@ vpnc (0.5.3r449-3) unstable; urgency=low
   * debian/control: Added Homepage field.
   * Added fix_make_test.patch: cert0.pem has expired, remove it from test.
   * Rewrote debian/copyright according to DEP-5.
+  * Added debian/watch.
 
  -- Florian Schlichting <fschlich@zedat.fu-berlin.de>  Sun, 08 Jan 2012 01:20:33 +0100
 
