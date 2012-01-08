@@ -1,0 +1,4 @@
+usr/sbin/vpnc usr/sbin/vpnc-connect
+usr/share/man/man8/vpnc.8.gz usr/share/man/man8/vpnc-connect.8.gz
+usr/share/man/man8/vpnc.8.gz usr/share/man/man8/vpnc-disconnect.8.gz
+
