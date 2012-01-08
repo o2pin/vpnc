@@ -1,7 +1,7 @@
 Source: vpnc
 Section: net
 Priority: extra
-Maintainer: Eric Warmenhoven <warmenhoven@debian.org>
+Maintainer: Florian Schlichting <fschlich@zedat.fu-berlin.de>
 Build-Depends: debhelper (>= 7.0.0), libgnutls-dev, pkg-config, dpatch
 Standards-Version: 3.8.4.0
 
