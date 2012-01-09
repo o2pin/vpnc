@@ -1,5 +1,5 @@
 .\" Template to generate the vpnc-manpage
-.\" $Id: vpnc.8.template 378 2008-11-26 14:37:07Z Joerg Mayer $
+.\" $Id: vpnc.8.template 473 2011-11-13 00:48:06Z Antonio Borneo $
 .\"
 .TH VPNC "8" "Warning: Just a template!" "vpnc man-template" "Warning: Just a template!"
 .\" Fake header just to make this file viewable with man.
@@ -95,7 +95,7 @@ Prints your configuration; output can be used as vpnc.conf
 .I /etc/vpnc/default.conf
 .RS
 The default configuration file. You can specify the same config
-directives as with command line options and additionaly
+directives as with command line options and additionally
 .B IPSec secret
 and
 .B Xauth password

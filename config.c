@@ -15,7 +15,7 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-   $Id: config.c 443 2009-09-12 15:39:29Z Joerg Mayer $
+   $Id: config.c 474 2011-11-20 06:02:04Z Antonio Borneo $
 */
 
 #define _GNU_SOURCE
@@ -23,6 +23,7 @@
 #include <inttypes.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include <unistd.h>
 #include <string.h>
 #include <errno.h>
@@ -45,6 +46,19 @@ enum natt_mode_enum opt_natt_mode;
 enum vendor_enum opt_vendor;
 enum if_mode_enum opt_if_mode;
 uint16_t opt_udpencapport;
+
+static void log_to_stderr(int priority __attribute__((unused)), const char *format, ...)
+{
+	va_list ap;
+
+	va_start(ap, format);
+	vfprintf(stderr, format, ap);
+	fprintf(stderr, "\n");
+	va_end(ap);
+}
+
+void (*logmsg)(int priority, const char *format, ...) = log_to_stderr;
+
 
 void hex_dump(const char *str, const void *data, ssize_t len, const struct debug_strings *decode)
 {
