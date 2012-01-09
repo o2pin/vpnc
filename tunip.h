@@ -15,7 +15,7 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-   $Id: tunip.h 389 2008-12-21 03:24:27Z Maurice Massar $
+   $Id: tunip.h 456 2011-01-26 17:18:37Z Maurice Massar $
 */
 
 #ifndef __TUNIP_H__
@@ -107,7 +107,7 @@ struct sa_block {
 		int natd_type;
 		uint8_t *natd_us, *natd_them;
 	} ike;
-	uint8_t our_address[4], our_netmask[4];
+	struct in_addr our_address;
 	struct {
 		int do_pfs;
 		int cry_algo, md_algo;

@@ -16,7 +16,7 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-   $Id: isakmp-pkt.c 376 2008-11-25 18:00:50Z Joerg Mayer $
+   $Id: isakmp-pkt.c 472 2011-11-09 02:02:07Z Antonio Borneo $
 */
 
 #include <assert.h>
@@ -300,6 +300,19 @@ struct isakmp_attribute *new_isakmp_attribute_16(uint16_t type, uint16_t data,
 	return r;
 }
 
+static void free_isakmp_attributes(struct isakmp_attribute *attributes)
+{
+	struct isakmp_attribute *att, *nextatt;
+	for (att = attributes; att; att = nextatt) {
+		nextatt = att->next;
+		if (att->af == isakmp_attr_lots)
+			free(att->u.lots.data);
+		if (att->af == isakmp_attr_acl)
+			free(att->u.acl.acl_ent);
+		free(att);
+	}
+}
+
 struct isakmp_packet *new_isakmp_packet(void)
 {
 	return xallocc(sizeof(struct isakmp_packet));
@@ -347,15 +360,7 @@ static void free_isakmp_payload(struct isakmp_payload *p)
 		free_isakmp_payload(p->u.p.transforms);
 		break;
 	case ISAKMP_PAYLOAD_T:
-		{
-			struct isakmp_attribute *att, *natt;
-			for (att = p->u.t.attributes; att; att = natt) {
-				natt = att->next;
-				if (att->af == isakmp_attr_lots)
-					free(att->u.lots.data);
-				free(att);
-			}
-		}
+		free_isakmp_attributes(p->u.t.attributes);
 		break;
 	case ISAKMP_PAYLOAD_KE:
 	case ISAKMP_PAYLOAD_HASH:
@@ -376,6 +381,7 @@ static void free_isakmp_payload(struct isakmp_payload *p)
 	case ISAKMP_PAYLOAD_N:
 		free(p->u.n.spi);
 		free(p->u.n.data);
+		free_isakmp_attributes(p->u.n.attributes);
 		break;
 	case ISAKMP_PAYLOAD_D:
 		if (p->u.d.spi) {
@@ -386,17 +392,7 @@ static void free_isakmp_payload(struct isakmp_payload *p)
 		}
 		break;
 	case ISAKMP_PAYLOAD_MODECFG_ATTR:
-		{
-			struct isakmp_attribute *att, *natt;
-			for (att = p->u.modecfg.attributes; att; att = natt) {
-				natt = att->next;
-				if (att->af == isakmp_attr_lots)
-					free(att->u.lots.data);
-				if (att->af == isakmp_attr_acl)
-					free(att->u.acl.acl_ent);
-				free(att);
-			}
-		}
+		free_isakmp_attributes(p->u.modecfg.attributes);
 		break;
 	default:
 		abort();
@@ -820,7 +816,7 @@ struct isakmp_packet *parse_isakmp_packet(const uint8_t * data, size_t data_len,
 	}
 
 	DEBUG(3, printf("BEGIN_PARSE\n"));
-	DEBUG(3, printf("Recieved Packet Len: %d\n", data_len));
+	DEBUG(3, printf("Recieved Packet Len: %zu\n", data_len));
 	fetchn(r->i_cookie, ISAKMP_COOKIE_LENGTH);
 	hex_dump("i_cookie", r->i_cookie, ISAKMP_COOKIE_LENGTH, NULL);
 	fetchn(r->r_cookie, ISAKMP_COOKIE_LENGTH);

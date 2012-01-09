@@ -15,7 +15,7 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-   $Id: config.h 376 2008-11-25 18:00:50Z Joerg Mayer $
+   $Id: config.h 474 2011-11-20 06:02:04Z Antonio Borneo $
 */
 
 #ifndef __CONFIG_H__
@@ -130,5 +130,8 @@ extern uint16_t opt_udpencapport;
 
 extern void hex_dump(const char *str, const void *data, ssize_t len, const struct debug_strings *decode);
 extern void do_config(int argc, char **argv);
+
+extern void (*logmsg)(int priority, const char *format, ...)
+	__attribute__ ((__format__ (__printf__, 2, 3)));
 
 #endif

@@ -18,7 +18,7 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-   $Id: vpnc.c 421 2009-09-01 00:09:12Z Joerg Mayer $
+   $Id: vpnc.c 478 2011-11-20 12:38:07Z Antonio Borneo $
 */
 
 #define _GNU_SOURCE
@@ -88,6 +88,10 @@ const unsigned char VID_NATT_02N[] = { /* "draft-ietf-ipsec-nat-t-ike-02\n" */
 	0x90, 0xCB, 0x80, 0x91, 0x3E, 0xBB, 0x69, 0x6E,
 	0x08, 0x63, 0x81, 0xB5, 0xEC, 0x42, 0x7B, 0x1F
 };
+const unsigned char VID_NATT_03[] = { /* "draft-ietf-ipsec-nat-t-ike-03" */
+	0x7d, 0x94, 0x19, 0xa6, 0x53, 0x10, 0xca, 0x6f,
+	0x2c, 0x17, 0x9d, 0x92, 0x15, 0x52, 0x9d, 0x56
+};
 const unsigned char VID_NATT_RFC[] = { /* "RFC 3947" */
 	0x4A, 0x13, 0x1C, 0x81, 0x07, 0x03, 0x58, 0x45,
 	0x5C, 0x57, 0x28, 0xF2, 0x0E, 0x95, 0x45, 0x2F
@@ -141,6 +145,7 @@ const struct vid_element vid_list[] = {
 	{ VID_NATT_01,		sizeof(VID_NATT_01),	"Nat-T 01" },
 	{ VID_NATT_02,		sizeof(VID_NATT_02),	"Nat-T 02" },
 	{ VID_NATT_02N,		sizeof(VID_NATT_02N),	"Nat-T 02N" },
+	{ VID_NATT_03,		sizeof(VID_NATT_03),	"Nat-T 03" },
 	{ VID_NATT_RFC,		sizeof(VID_NATT_RFC),	"Nat-T RFC" },
 	{ VID_DWR,		sizeof(VID_DWR),	"Delete With Reason" },
 	{ VID_CISCO_FRAG,	sizeof(VID_CISCO_FRAG),	"Cisco Fragmentation" },
@@ -742,7 +747,7 @@ static void send_dpd(struct sa_block *s, int isack, uint32_t seqno)
 	memcpy(pl->u.n.spi + ISAKMP_COOKIE_LENGTH * 1, s->ike.r_cookie, ISAKMP_COOKIE_LENGTH);
 	pl->u.n.data_length = 4;
 	pl->u.n.data = xallocc(4);
-	memcpy(pl->u.n.data, &seqno, 4);
+	*((uint32_t *) pl->u.n.data) = htonl(seqno);
 	gcry_create_nonce((uint8_t *) & msgid, sizeof(msgid));
 	/* 2007-09-06 JKU/ZID: Sonicwall drops non hashed r_u_there-requests */
 	sendrecv_phase2(s, pl, ISAKMP_EXCHANGE_INFORMATIONAL, msgid,
@@ -760,7 +765,7 @@ void dpd_ike(struct sa_block *s)
 		*/
 		s->ike.dpd_attempts = 6;
 		s->ike.dpd_sent = time(NULL);
-		++s->ike.dpd_seqno;
+		s->ike.dpd_seqno++;
 		send_dpd(s, 0, s->ike.dpd_seqno);
 	} else {
 		/* Our last dpd request has not yet been acked.  If it's been
@@ -918,7 +923,7 @@ static int do_config_to_env(struct sa_block *s, struct isakmp_attribute *a)
 				reject = ISAKMP_N_ATTRIBUTES_NOT_SUPPORTED;
 			else {
 				addenv_ipv4("INTERNAL_IP4_ADDRESS", a->u.lots.data);
-				memcpy(s->our_address, a->u.lots.data, 4);
+				memcpy(&s->our_address, a->u.lots.data, 4);
 			}
 			seen_address = 1;
 			break;
@@ -931,7 +936,7 @@ static int do_config_to_env(struct sa_block *s, struct isakmp_attribute *a)
 			if (a->af != isakmp_attr_lots || a->u.lots.length != 4)
 				reject = ISAKMP_N_ATTRIBUTES_NOT_SUPPORTED;
 			else {
-				uint32_t netaddr = ((struct in_addr *)(s->our_address))->s_addr & ((struct in_addr *)(a->u.lots.data))->s_addr;
+				uint32_t netaddr = s->our_address.s_addr & ((struct in_addr *)(a->u.lots.data))->s_addr;
 				addenv_ipv4("INTERNAL_IP4_NETMASK", a->u.lots.data);
 				asprintf(&strbuf, "%d", mask_to_masklen(*((struct in_addr *)a->u.lots.data)));
 				setenv("INTERNAL_IP4_NETMASKLEN", strbuf, 1);
@@ -1156,8 +1161,11 @@ static void lifetime_ike_process(struct sa_block *s, struct isakmp_attribute *a)
 		value = a->next->u.attr_16;
 	else if (a->next->af == isakmp_attr_lots && a->next->u.lots.length == 4)
 		value = ntohl(*((uint32_t *) a->next->u.lots.data));
-	else
-		assert(0);
+	else {
+		DEBUG(2, printf("got unknown ike lifetime attributes af %d len %d\n",
+					a->next->af, a->next->u.lots.length));
+		return;
+	}
 
 	DEBUG(2, printf("got ike lifetime attributes: %d %s\n", value,
 		(a->u.attr_16 == IKE_LIFE_TYPE_SECONDS) ? "seconds" : "kilobyte"));
@@ -1267,6 +1275,8 @@ static void do_phase1_am_packet1(struct sa_block *s, const char *key_id)
 			l = l->next = new_isakmp_data_payload(ISAKMP_PAYLOAD_VID,
 				VID_NATT_RFC, sizeof(VID_NATT_RFC));
 			l = l->next = new_isakmp_data_payload(ISAKMP_PAYLOAD_VID,
+				VID_NATT_03, sizeof(VID_NATT_03));
+			l = l->next = new_isakmp_data_payload(ISAKMP_PAYLOAD_VID,
 				VID_NATT_02N, sizeof(VID_NATT_02N));
 			l = l->next = new_isakmp_data_payload(ISAKMP_PAYLOAD_VID,
 				VID_NATT_02, sizeof(VID_NATT_02));
@@ -1281,7 +1291,7 @@ static void do_phase1_am_packet1(struct sa_block *s, const char *key_id)
 				s->ike.dpd_idle = 10;
 			if (s->ike.dpd_idle > 86400)
 				s->ike.dpd_idle = 86400;
-			l = l->next = new_isakmp_data_payload(ISAKMP_PAYLOAD_VID,
+			l->next = new_isakmp_data_payload(ISAKMP_PAYLOAD_VID,
 				VID_DPD, sizeof(VID_DPD));
 		}
 		flatten_isakmp_packet(p1, &pkt, &pkt_len, 0);
@@ -1306,12 +1316,12 @@ static void do_phase1_am_packet2(struct sa_block *s, const char *shared_key)
 		struct isakmp_payload *hash = NULL;
 		struct isakmp_payload *sig = NULL;
 		struct isakmp_payload *idp = NULL;
-		int seen_sa = 0, seen_xauth_vid = 0;
+		int seen_sa = 0;
 		uint8_t *psk_skeyid;
 		uint8_t *skeyid;
 		gcry_md_hd_t skeyid_ctx;
 		uint8_t *dh_shared_secret;
-		int seen_natt_vid = 0, seen_natd = 0, seen_natd_them = 0, seen_natd_us = 0;
+		int seen_natd = 0, seen_natd_them = 0, seen_natd_us = 0;
 		int natt_draft = -1;
 		crypto_ctx *cctx;
 		crypto_error *crerr = NULL;
@@ -1494,35 +1504,35 @@ static void do_phase1_am_packet2(struct sa_block *s, const char *shared_key)
 				if (rp->u.vid.length == sizeof(VID_XAUTH)
 					&& memcmp(rp->u.vid.data, VID_XAUTH,
 						sizeof(VID_XAUTH)) == 0) {
-					seen_xauth_vid = 1;
+					DEBUG(2, printf("peer is XAUTH capable (draft-ietf-ipsec-isakmp-xauth-06)\n"));
 				} else if (rp->u.vid.length == sizeof(VID_NATT_RFC)
 					&& memcmp(rp->u.vid.data, VID_NATT_RFC,
 						sizeof(VID_NATT_RFC)) == 0) {
-					seen_natt_vid = 1;
 					if (natt_draft < 1) natt_draft = 2;
 					DEBUG(2, printf("peer is NAT-T capable (RFC 3947)\n"));
+				} else if (rp->u.vid.length == sizeof(VID_NATT_03)
+					&& memcmp(rp->u.vid.data, VID_NATT_03,
+						sizeof(VID_NATT_03)) == 0) {
+					if (natt_draft < 1) natt_draft = 2;
+					DEBUG(2, printf("peer is NAT-T capable (draft-03)\n"));
 				} else if (rp->u.vid.length == sizeof(VID_NATT_02N)
 					&& memcmp(rp->u.vid.data, VID_NATT_02N,
 						sizeof(VID_NATT_02N)) == 0) {
-					seen_natt_vid = 1;
 					if (natt_draft < 1) natt_draft = 2;
 					DEBUG(2, printf("peer is NAT-T capable (draft-02)\\n\n")); /* sic! */
 				} else if (rp->u.vid.length == sizeof(VID_NATT_02)
 					&& memcmp(rp->u.vid.data, VID_NATT_02,
 						sizeof(VID_NATT_02)) == 0) {
-					seen_natt_vid = 1;
 					if (natt_draft < 1) natt_draft = 2;
 					DEBUG(2, printf("peer is NAT-T capable (draft-02)\n"));
 				} else if (rp->u.vid.length == sizeof(VID_NATT_01)
 					&& memcmp(rp->u.vid.data, VID_NATT_01,
 						sizeof(VID_NATT_01)) == 0) {
-					seen_natt_vid = 1;
 					if (natt_draft < 1) natt_draft = 1;
 					DEBUG(2, printf("peer is NAT-T capable (draft-01)\n"));
 				} else if (rp->u.vid.length == sizeof(VID_NATT_00)
 					&& memcmp(rp->u.vid.data, VID_NATT_00,
 						sizeof(VID_NATT_00)) == 0) {
-					seen_natt_vid = 1;
 					if (natt_draft < 0) natt_draft = 0;
 					DEBUG(2, printf("peer is NAT-T capable (draft-00)\n"));
 				} else if (rp->u.vid.length == sizeof(VID_DPD)
@@ -1555,7 +1565,7 @@ static void do_phase1_am_packet2(struct sa_block *s, const char *shared_key)
 				s->ike.natd_type = rp->type;
 				DEBUG(2, printf("peer is using type %d%s for NAT-Discovery payloads\n",
 					s->ike.natd_type, val_to_string(s->ike.natd_type, isakmp_payload_enum_array)));
-				if (!seen_sa /*|| !seen_natt_vid*/) {
+				if (!seen_sa) {
 					reject = ISAKMP_N_INVALID_PAYLOAD_TYPE;
 				} else if (opt_natt_mode == NATT_NONE) {
 					;
@@ -1580,6 +1590,19 @@ static void do_phase1_am_packet2(struct sa_block *s, const char *shared_key)
 				} else {
 					if (memcmp(s->ike.natd_them, rp->u.natd.data, s->ike.md_len) == 0)
 						seen_natd_them = 1;
+				}
+				break;
+			case ISAKMP_PAYLOAD_N:
+				if (rp->u.n.type == ISAKMP_N_IPSEC_RESPONDER_LIFETIME) {
+					if (rp->u.n.protocol == ISAKMP_IPSEC_PROTO_ISAKMP)
+						lifetime_ike_process(s, rp->u.n.attributes);
+					else if (rp->u.n.protocol == ISAKMP_IPSEC_PROTO_IPSEC_ESP)
+						lifetime_ipsec_process(s, rp->u.n.attributes);
+					else
+						DEBUG(2, printf("got unknown lifetime notice, ignoring..\n"));
+				} else {
+					DEBUG(1, printf("rejecting ISAKMP_PAYLOAD_N, type is not lifetime\n"));
+					reject = ISAKMP_N_INVALID_PAYLOAD_TYPE;
 				}
 				break;
 			default:
@@ -2001,7 +2024,7 @@ static void do_phase1_am_packet3(struct sa_block *s)
 		if (s->ike.natd_type != 0) {
 			pl = pl->next = new_isakmp_data_payload(s->ike.natd_type,
 				s->ike.natd_them, s->ike.md_len);
-			pl = pl->next = new_isakmp_data_payload(s->ike.natd_type,
+			pl->next = new_isakmp_data_payload(s->ike.natd_type,
 				s->ike.natd_us, s->ike.md_len);
 			free(s->ike.natd_us);
 			free(s->ike.natd_them);
@@ -2469,7 +2492,7 @@ static struct isakmp_attribute *make_transform_ipsec(struct sa_block *s, int dh_
 
 static struct isakmp_payload *make_our_sa_ipsec(struct sa_block *s)
 {
-	struct isakmp_payload *r = new_isakmp_payload(ISAKMP_PAYLOAD_SA);
+	struct isakmp_payload *r;
 	struct isakmp_payload *p = NULL, *pn;
 	struct isakmp_attribute *a;
 	int dh_grp = get_dh_group_ipsec(s->ipsec.do_pfs)->ipsec_sa_id;
@@ -2479,12 +2502,6 @@ static struct isakmp_payload *make_our_sa_ipsec(struct sa_block *s)
 	r = new_isakmp_payload(ISAKMP_PAYLOAD_SA);
 	r->u.sa.doi = ISAKMP_DOI_IPSEC;
 	r->u.sa.situation = ISAKMP_IPSEC_SIT_IDENTITY_ONLY;
-	r->u.sa.proposals = new_isakmp_payload(ISAKMP_PAYLOAD_P);
-	r->u.sa.proposals->u.p.spi_size = 4;
-	r->u.sa.proposals->u.p.spi = xallocc(4);
-	/* The sadb_sa_spi field is already in network order.  */
-	memcpy(r->u.sa.proposals->u.p.spi, &s->ipsec.rx.spi, 4);
-	r->u.sa.proposals->u.p.prot_id = ISAKMP_IPSEC_PROTO_IPSEC_ESP;
 	for (crypt = 0; supp_crypt[crypt].name != NULL; crypt++) {
 		keylen = supp_crypt[crypt].keylen;
 		for (hash = 0; supp_hash[hash].name != NULL; hash++) {
@@ -2536,7 +2553,7 @@ static void do_phase2_qm(struct sa_block *s)
 	us->u.id.type = ISAKMP_IPSEC_ID_IPV4_ADDR;
 	us->u.id.length = 4;
 	us->u.id.data = xallocc(4);
-	memcpy(us->u.id.data, s->our_address, sizeof(struct in_addr));
+	memcpy(us->u.id.data, &s->our_address, sizeof(struct in_addr));
 	them = new_isakmp_payload(ISAKMP_PAYLOAD_ID);
 	them->u.id.type = ISAKMP_IPSEC_ID_IPV4_ADDR_SUBNET;
 	them->u.id.length = 8;
@@ -2779,32 +2796,34 @@ static void do_phase2_qm(struct sa_block *s)
 		free(dh_shared_secret);
 		free_isakmp_packet(r);
 
-		if ((opt_natt_mode == NATT_CISCO_UDP) && s->ipsec.peer_udpencap_port) {
-			s->esp_fd = make_socket(s, opt_udpencapport, s->ipsec.peer_udpencap_port);
-			s->ipsec.encap_mode = IPSEC_ENCAP_UDP_TUNNEL;
-			s->ipsec.natt_active_mode = NATT_ACTIVE_CISCO_UDP;
-		} else if (s->ipsec.encap_mode != IPSEC_ENCAP_TUNNEL) {
-			s->esp_fd = s->ike_fd;
-		} else {
+		if (s->esp_fd == 0) {
+			if ((opt_natt_mode == NATT_CISCO_UDP) && s->ipsec.peer_udpencap_port) {
+				s->esp_fd = make_socket(s, opt_udpencapport, s->ipsec.peer_udpencap_port);
+				s->ipsec.encap_mode = IPSEC_ENCAP_UDP_TUNNEL;
+				s->ipsec.natt_active_mode = NATT_ACTIVE_CISCO_UDP;
+			} else if (s->ipsec.encap_mode != IPSEC_ENCAP_TUNNEL) {
+				s->esp_fd = s->ike_fd;
+			} else {
 #ifdef IP_HDRINCL
-			int hincl = 1;
+				int hincl = 1;
 #endif
 
-			s->esp_fd = socket(PF_INET, SOCK_RAW, IPPROTO_ESP);
-			if (s->esp_fd == -1) {
-				close_tunnel(s);
-				error(1, errno, "Couldn't open socket of ESP. Maybe something registered ESP already.\nPlease try '--natt-mode force-natt' or disable whatever is using ESP.\nsocket(PF_INET, SOCK_RAW, IPPROTO_ESP)");
-			}
+				s->esp_fd = socket(PF_INET, SOCK_RAW, IPPROTO_ESP);
+				if (s->esp_fd == -1) {
+					close_tunnel(s);
+					error(1, errno, "Couldn't open socket of ESP. Maybe something registered ESP already.\nPlease try '--natt-mode force-natt' or disable whatever is using ESP.\nsocket(PF_INET, SOCK_RAW, IPPROTO_ESP)");
+				}
 #ifdef FD_CLOEXEC
-			/* do not pass socket to vpnc-script, etc. */
-			fcntl(s->esp_fd, F_SETFD, FD_CLOEXEC);
+				/* do not pass socket to vpnc-script, etc. */
+				fcntl(s->esp_fd, F_SETFD, FD_CLOEXEC);
 #endif
 #ifdef IP_HDRINCL
-			if (setsockopt(s->esp_fd, IPPROTO_IP, IP_HDRINCL, &hincl, sizeof(hincl)) == -1) {
-				close_tunnel(s);
-				error(1, errno, "setsockopt(esp_fd, IPPROTO_IP, IP_HDRINCL, 1)");
-			}
+				if (setsockopt(s->esp_fd, IPPROTO_IP, IP_HDRINCL, &hincl, sizeof(hincl)) == -1) {
+					close_tunnel(s);
+					error(1, errno, "setsockopt(esp_fd, IPPROTO_IP, IP_HDRINCL, 1)");
+				}
 #endif
+			}
 		}
 
 		s->ipsec.rx.seq_id = s->ipsec.tx.seq_id = 1;
@@ -3060,7 +3079,7 @@ void process_late_ike(struct sa_block *s, uint8_t *r_packet, ssize_t r_length)
 					DEBUG(2, printf("ignoring bad data length R-U-THERE request\n"));
 					continue;
 				}
-				memcpy(&seq, rp->u.n.data, 4);
+				seq = ntohl(*((uint32_t *) rp->u.n.data));
 				send_dpd(s, 1, seq);
 				DEBUG(2, printf("got r-u-there request sent ack\n"));
 				continue;
@@ -3070,7 +3089,7 @@ void process_late_ike(struct sa_block *s, uint8_t *r_packet, ssize_t r_length)
 					DEBUG(2, printf("ignoring bad data length R-U-THERE-ACK\n"));
 					continue;
 				}
-				memcpy(&seqack, rp->u.n.data, 4);
+				seqack = ntohl(*((uint32_t *) rp->u.n.data));
 				if (seqack == s->ike.dpd_seqno) {
 					s->ike.dpd_seqno_ack = seqack;
 				} else {
@@ -3095,9 +3114,14 @@ void process_late_ike(struct sa_block *s, uint8_t *r_packet, ssize_t r_length)
 			 */
 			/* FIXME: any cleanup needed??? */
 
-			free_isakmp_packet(r);
-			do_phase2_qm(s);
-			return;
+			if (rp->u.d.num_spi >= 1 && memcmp(rp->u.d.spi[0], &s->ipsec.tx.spi, 4) == 0) {
+				free_isakmp_packet(r);
+				do_phase2_qm(s);
+				return;
+			} else {
+				DEBUG(2, printf("got isakmp delete with bogus spi (expected %d, received %d), ignoring...\n", s->ipsec.tx.spi, *(rp->u.d.spi[0]) ));
+				continue;
+			}
 		}
 		/* skip ipsec-esp delete */
 		if (rp->u.d.protocol != ISAKMP_IPSEC_PROTO_ISAKMP) {

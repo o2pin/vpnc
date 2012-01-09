@@ -15,7 +15,7 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-   $Id: isakmp.h 376 2008-11-25 18:00:50Z Joerg Mayer $
+   $Id: isakmp.h 450 2010-12-30 12:24:41Z Joerg Mayer $
 */
 
 #ifndef __ISAKMP_H__
@@ -436,6 +436,10 @@ enum isakmp_modecfg_attrib_enum {
 	ISAKMP_MODECFG_ATTRIB_CISCO_UDP_ENCAP_PORT,
 	ISAKMP_MODECFG_ATTRIB_CISCO_UNKNOWN, /* whatever 0x7006 is... */
 	ISAKMP_MODECFG_ATTRIB_CISCO_DO_PFS,
+	/* Cisco Ext: Smartcard Disconnect */
+	/* Cisco Ext: IKE_CFG_FWTYPE_VENDOR */
+	/* Cisco Ext: IKE_CFG_FWTYPE_PRODUCT */
+	/* Cisco Ext: IKE_CFG_FWTYPE_CAPABILITIES??? */
 	ISAKMP_MODECFG_ATTRIB_CISCO_FW_TYPE,
 	ISAKMP_MODECFG_ATTRIB_CISCO_BACKUP_SERVER,
 	ISAKMP_MODECFG_ATTRIB_CISCO_DDNS_HOSTNAME,
