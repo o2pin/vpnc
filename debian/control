@@ -9,7 +9,7 @@ Homepage: http://www.unix-ag.uni-kl.de/~massar/vpnc/
 Package: vpnc
 Architecture: any
 Suggests: resolvconf
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}, ${perl:Depends}
 Recommends: iproute
 Description: Cisco-compatible VPN client
  vpnc is a VPN client compatible with cisco3000 VPN Concentrator (also
