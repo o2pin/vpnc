@@ -5,6 +5,7 @@ vpnc (0.5.3r481-1) unstable; urgency=low
   * Refreshed patches, dropped 07_bug496718.patch, 08_bug640978.patch (applied
     upstream), added fix_spelling_errors.patch, unused-but-set-parameter.patch.
   * Added missing ${perl:Depends}.
+  * Updated debian/copyright to reflect recent work in SVN.
 
  -- Florian Schlichting <fschlich@zedat.fu-berlin.de>  Mon, 09 Jan 2012 21:57:57 +0100
 
