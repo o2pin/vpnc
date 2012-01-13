@@ -1,0 +1,40 @@
+Description: remove an unused parameter, and two redundant Perl variables
+Author: Florian Schlichting <fschlich@zedat.fu-berlin.de>
+Forwarded: yes
+
+--- a/tunip.c
++++ b/tunip.c
+@@ -649,12 +649,10 @@
+  * Process non-IP packets
+  * Return 1 if packet has been processed, 0 otherwise
+  */
+-static int process_non_ip(struct sa_block *s, uint8_t *frame)
++static int process_non_ip(uint8_t *frame)
+ {
+ 	struct ether_header *eth = (struct ether_header *) frame;
+ 
+-	s = NULL; /* unused */
+-
+ 	if (ntohs(eth->ether_type) != ETHERTYPE_IP) {
+ 		/* drop non-ip traffic */
+ 		return 1;
+@@ -684,7 +682,7 @@
+ 		if (process_arp(s, start)) {
+ 			return;
+ 		}
+-		if (process_non_ip(s, start)) {
++		if (process_non_ip(start)) {
+ 			return;
+ 		}
+ 		pack -= ETH_HLEN;
+--- a/enum2debug.pl
++++ b/enum2debug.pl
+@@ -6,8 +6,6 @@
+ use warnings;
+ 
+ my $in_enum = 0;
+-my $element;
+-my $arrayname;
+ 
+ print STDERR << 'EOF';
+ /* Automatically generated with enum2debug.pl: Don't edit! */

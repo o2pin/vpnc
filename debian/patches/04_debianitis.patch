@@ -2,10 +2,9 @@ Description: "Debian specific" changes: DNS_UPDATE, TARGET_NETWORKS, /etc/vpnc/v
 Author: Eduard Bloch <blade@debian.org>
 Forwarded: no
 
-diff -urNad vpnc~/config.c vpnc/config.c
---- vpnc~/config.c	2008-07-19 01:18:33.000000000 +0200
-+++ vpnc/config.c	2008-07-19 01:32:50.000000000 +0200
-@@ -191,6 +191,16 @@
+--- a/config.c
++++ b/config.c
+@@ -205,6 +205,16 @@
  	return "0.0.0.0/0.0.0.0";
  }
  
@@ -22,7 +21,7 @@ diff -urNad vpnc~/config.c vpnc/config.c
  static const struct config_names_s {
  	enum config_enum nm;
  	const int needsArgument;
-@@ -447,7 +457,27 @@
+@@ -461,7 +471,27 @@
  		"<target network/netmask>",
  		"Target network in dotted decimal or CIDR notation\n",
  		config_def_target_network
@@ -51,9 +50,8 @@ diff -urNad vpnc~/config.c vpnc/config.c
  		0, 0, 0, NULL, NULL, NULL, NULL, NULL
  	}
  };
-diff -urNad vpnc~/config.h vpnc/config.h
---- vpnc~/config.h	2008-07-19 01:18:33.000000000 +0200
-+++ vpnc/config.h	2008-07-19 01:31:15.000000000 +0200
+--- a/config.h
++++ b/config.h
 @@ -58,6 +58,11 @@
  	CONFIG_AUTH_MODE,
  	CONFIG_CA_FILE,
@@ -66,10 +64,9 @@ diff -urNad vpnc~/config.h vpnc/config.h
  	LAST_CONFIG
  };
  
-diff -urNad vpnc~/vpnc-script.in vpnc/vpnc-script.in
---- vpnc~/vpnc-script.in	2008-07-19 01:18:33.000000000 +0200
-+++ vpnc/vpnc-script.in	2008-07-19 01:31:15.000000000 +0200
-@@ -402,8 +402,9 @@
+--- a/vpnc-script.in
++++ b/vpnc-script.in
+@@ -403,8 +403,9 @@
  		else # can't open /dev/net/tun
  			test -e /proc/sys/kernel/modprobe && `cat /proc/sys/kernel/modprobe` tun 2>/dev/null
  			# fix for broken devfs in kernel 2.6.x
@@ -81,7 +78,7 @@ diff -urNad vpnc~/vpnc-script.in vpnc/vpnc-script.in
  				ln -sf /dev/misc/net/tun /dev/net/tun
  			fi
  			# make sure tun device exists
-@@ -439,6 +440,27 @@
+@@ -440,6 +441,27 @@
  }
  
  do_connect() {
@@ -109,14 +106,12 @@ diff -urNad vpnc~/vpnc-script.in vpnc/vpnc-script.in
  	if [ -n "$CISCO_BANNER" ]; then
  		echo "Connect Banner:"
  		echo "$CISCO_BANNER" | while read LINE ; do echo "|" "$LINE" ; done
-@@ -466,13 +488,31 @@
- 	else
+@@ -468,12 +490,30 @@
  		set_default_route
  	fi
--
+ 
 -	if [ -n "$INTERNAL_IP4_DNS" ]; then
 -		$MODIFYRESOLVCONF
-+
 +	case "$DNS_UPDATE" in
 +	   *no|*NO|*No|*nO)
 +	   ;;
@@ -144,7 +139,7 @@ diff -urNad vpnc~/vpnc-script.in vpnc/vpnc-script.in
  	if [ -n "$CISCO_SPLIT_INC" ]; then
  		i=0
  		while [ $i -lt $CISCO_SPLIT_INC ] ; do
-@@ -497,8 +537,17 @@
+@@ -498,8 +538,17 @@
  
  	del_vpngateway_route
  
@@ -164,10 +159,9 @@ diff -urNad vpnc~/vpnc-script.in vpnc/vpnc-script.in
  	fi
  	destroy_tun_device
  }
-diff -urNad vpnc~/vpnc.c vpnc/vpnc.c
---- vpnc~/vpnc.c	2008-07-19 01:18:33.000000000 +0200
-+++ vpnc/vpnc.c	2008-07-19 01:31:15.000000000 +0200
-@@ -355,6 +355,9 @@
+--- a/vpnc.c
++++ b/vpnc.c
+@@ -360,6 +360,9 @@
  {
  	setenv("VPNGATEWAY", inet_ntoa(s->dst), 1);
  	setenv("reason", "connect", 1);
