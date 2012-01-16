@@ -16,7 +16,7 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-   $Id: isakmp-pkt.c 472 2011-11-09 02:02:07Z Antonio Borneo $
+   $Id$
 */
 
 #include <assert.h>
@@ -816,7 +816,7 @@ struct isakmp_packet *parse_isakmp_packet(const uint8_t * data, size_t data_len,
 	}
 
 	DEBUG(3, printf("BEGIN_PARSE\n"));
-	DEBUG(3, printf("Recieved Packet Len: %zu\n", data_len));
+	DEBUG(3, printf("Received Packet Len: %zu\n", data_len));
 	fetchn(r->i_cookie, ISAKMP_COOKIE_LENGTH);
 	hex_dump("i_cookie", r->i_cookie, ISAKMP_COOKIE_LENGTH, NULL);
 	fetchn(r->r_cookie, ISAKMP_COOKIE_LENGTH);
