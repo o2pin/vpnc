@@ -15,7 +15,7 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-   $Id: config.h 474 2011-11-20 06:02:04Z Antonio Borneo $
+   $Id$
 */
 
 #ifndef __CONFIG_H__
@@ -40,6 +40,7 @@ enum config_enum {
 	CONFIG_VERSION,
 	CONFIG_IF_NAME,
 	CONFIG_IF_MODE,
+	CONFIG_IF_MTU,
 	CONFIG_IKE_DH,
 	CONFIG_IPSEC_PFS,
 	CONFIG_IPSEC_GATEWAY,

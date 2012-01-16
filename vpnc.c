@@ -18,7 +18,7 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-   $Id: vpnc.c 478 2011-11-20 12:38:07Z Antonio Borneo $
+   $Id$
 */
 
 #define _GNU_SOURCE
@@ -353,6 +353,23 @@ static void setup_tunnel(struct sa_block *s)
 			error(1, errno, "can't get tunnel HW address");
 		}
 		hex_dump("interface HW addr", s->tun_hwaddr, ETH_ALEN, NULL);
+	}
+
+	unsetenv("INTERNAL_IP4_MTU");
+	if (config[CONFIG_IF_MTU]) {
+		int mtu;
+
+		mtu = atoi(config[CONFIG_IF_MTU]);
+		if (mtu < 0 || mtu > 65535) {
+			DEBUG(1, printf("ignore MTU option. Use automatic detection\n"));
+			mtu = 0;
+		}
+		if (mtu > 0) {
+			char *strbuf;
+			asprintf(&strbuf, "%d", mtu);
+			setenv("INTERNAL_IP4_MTU", strbuf, 1);
+			free(strbuf);
+		}
 	}
 }
 
@@ -911,10 +928,14 @@ static int do_config_to_env(struct sa_block *s, struct isakmp_attribute *a)
 	unsetenv("CISCO_BANNER");
 	unsetenv("CISCO_DEF_DOMAIN");
 	unsetenv("CISCO_SPLIT_INC");
+	unsetenv("CISCO_IPV6_SPLIT_INC");
 	unsetenv("INTERNAL_IP4_NBNS");
 	unsetenv("INTERNAL_IP4_DNS");
 	unsetenv("INTERNAL_IP4_NETMASK");
 	unsetenv("INTERNAL_IP4_ADDRESS");
+	unsetenv("INTERNAL_IP6_DNS");
+	unsetenv("INTERNAL_IP6_NETMASK");
+	unsetenv("INTERNAL_IP6_ADDRESS");
 
 	for (; a && reject == 0; a = a->next)
 		switch (a->type) {

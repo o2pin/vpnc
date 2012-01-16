@@ -15,7 +15,7 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-   $Id: tunip.h 456 2011-01-26 17:18:37Z Maurice Massar $
+   $Id$
 */
 
 #ifndef __TUNIP_H__

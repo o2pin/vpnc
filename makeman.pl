@@ -1,6 +1,6 @@
 #! /usr/bin/env perl
 
-# $Id: makeman.pl 418 2009-08-31 23:58:57Z Joerg Mayer $
+# $Id$
 
 # Written by Wolfram Sang (wolfram@the-dreams.de) in 2007,
 # some inspiration from help2man by Brendan O'Dea and from Perl::Critic
