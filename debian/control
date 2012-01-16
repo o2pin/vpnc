@@ -14,7 +14,7 @@ Recommends: iproute
 Description: Cisco-compatible VPN client
  vpnc is a VPN client compatible with cisco3000 VPN Concentrator (also
  known as Cisco's EasyVPN equipment). vpnc runs entirely in userspace
- and does not require kernel modules except of the tun driver to
+ and does not require kernel modules except for the tun driver to
  communicate with the network layer.
  .
  It supports most of the features needed to establish connection to the
