@@ -1,7 +1,7 @@
-vpnc (0.5.3r481-1) unstable; urgency=low
+vpnc (0.5.3r512-1) unstable; urgency=low
 
-  * New upstream SVN snapshot with support for Fritz!Box routers
-    (closes: #629646)
+  * Imported new upstream SVN snapshot with support for Fritz!Box routers
+    (closes: #629646), fixed MTU when no default route (closes: #525389).
   * Refreshed patches, dropped 07_bug496718.patch, 08_bug640978.patch (applied
     upstream), added fix_spelling_errors.patch, unused-but-set-parameter.patch.
   * Added missing ${perl:Depends}.
