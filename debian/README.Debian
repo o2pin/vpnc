@@ -1,11 +1,12 @@
 vpnc for Debian
 ===============
 
-The Debian version of vpnc has few improvements compared to the
+The Debian version of vpnc has a few improvements compared to the
 upstream version, mainly in the daemon invocation script. The
 vpnc-connect script works with multiple "profile" files, so you can
-manage multiple configurations easily. See vpnc-connect manpage for
+manage multiple configurations easily. See the vpnc-connect manpage for
 details.
+
 
 UPGRADE NOTES
 =============
@@ -18,7 +19,7 @@ vpnc-script. You can either wrap /etc/vpnc/vpnc-script into a custom script
 which presets those variables (like documented in the example in README.gz) or
 use vpnc-script-connect-action and vpnc-script-disconnect-action scripts to set
 them separately (see below), which may or may not be wanted depending on your
-setup. Or you can symlink them to have the same config in the both phases.
+setup. Or you can symlink them to have the same config in both phases.
 
 The same applies to the disabling of DNS data update. The old methods are
 preserved with compatibility wrappers for the near future but should be avoided
@@ -28,39 +29,67 @@ with new installations.
 CONFIGURATION
 =============
 
-To generate a sample config file for vpnc/vpnc-connect, copy
-/etc/vpnc/example.conf to a config file with the appropriate name. Or use the
-pcf2vpnc script to convert existing pcf files (Cisco client configuration),
-running the following command (replace myvpn with your VPN name):
+/etc/vpnc/default.conf contains a sample config for vpnc/vpnc-connect. You can
+uncomment and adjust the settings, or create a different configuration by
+copying it to, say, myvpn.conf and then select that by calling
 
-/usr/share/vpnc/pcf2vpnc myvpn.pcf > /etc/vpnc/myvpn.conf
+    vpnc myvpn
+
+Or use the pcf2vpnc script to convert existing pcf files (Cisco client
+configuration), running the following command:
+
+    /usr/share/vpnc/pcf2vpnc myvpn.pcf > /etc/vpnc/myvpn.conf
 
 You may edit the resulting file to add the remote username.
 
 In order to use the DNS server reported by the VPN server, please install the
 resolvconf package.
 
-You may place commands to be run on connect to or disconnect from the
-VPN server in /etc/vpnc/vpnc-script-connect-action and
-/etc/vpnc/vpnc-script-disconnect-action respectively. These scripts
-are sourced by /etc/vpnc/vpnc-script, see the comments at the top of
-that file for the environment variables you have access to. There are also
-possible /etc/vpnc/vpnc-script-post-connect-action and
-/etc/vpnc/vpnc-script-post-disconnect-action executed after the link
-configuration or shutdown.
+vpnc-script, which handles routing and DNS updates, can be customized by adding
+scripts to be run before and after connecting and disconnecting, respectively.
+The names of the scripts that will be sourced by /etc/vpnc/vpnc-script are:
+
+    /etc/vpnc/vpnc-script-connect-action
+    /etc/vpnc/vpnc-script-post-connect-action
+    /etc/vpnc/vpnc-script-disconnect-action
+    /etc/vpnc/vpnc-script-post-disconnect-action
+
+See the comments at the top of vpnc-script for the environment variables you
+have access to.
+
 
 (IN)SECURITY WARNING
 ====================
 
-Following this URL:
+As described at this URL:
 
-<http://www.cisco.com/warp/public/707/cisco-sn-20040415-grppass.shtml>
+<http://www.cisco.com/warp/public/707/cisco-sn-20040415-grppass.shtml>,
 
-and making simple considerations about the key exchange protocol shows
-that the methods are inherently insecure. The scrambled key does not
-really protect privacy, and there is nothing to prevent possible
-man-in-the-middle-attacks. Though IPsec is used for data transfer,
-simple XAUTH without certificates is not a secure way to pass the
-login data! Be aware of this fact when you enter a password!
+which references a Bugtraq thread starting at:
+
+<http://www.securityfocus.com/archive/1/347351> ("ISSUE 2")
+
+simple XAUTH relying only on pre-shared keys ("group password" method),
+is not a secure way to set up a trusted connection. In addition to
+giving away the confidentiality of the VPN session (man-in-the-middle
+attack), this configuration may disclose the user's password and thus
+enable the attacker to establish future VPN connections on his own
+and/or access other services protected by that password (identity
+theft).
+
+Cisco has implemented a different authentication mechanism that requires
+the use of a certificate in the client in order to securely establish
+the identity of the VPN server ("Hybrid Auth", "Mutual Group
+Authentication"). This mechanism is not known to be vulnerable.
+
+
+In short: If a simple configuration file with a group key and your
+password is enough to establish a VPN connection (auth-mode psk), you're
+vulnerable. Don't use a password that can also be used in other places,
+and don't assume your connection to be more secure. If however
+establishing a VPN connection requires a certificate identifying the
+server in addition to a group key and your password (auth-mode hybrid),
+you should be safe.
 
  -- Eduard Bloch -- Fri, 14 Apr 2006 23:08:54 +0200
+ -- Florian Schlichting --  Fri, 13 Jan 2012 19:56:41 +0200
