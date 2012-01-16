@@ -21,7 +21,7 @@ Forwarded: no
  static const struct config_names_s {
  	enum config_enum nm;
  	const int needsArgument;
-@@ -461,7 +471,27 @@
+@@ -468,7 +478,27 @@
  		"<target network/netmask>",
  		"Target network in dotted decimal or CIDR notation\n",
  		config_def_target_network
@@ -52,7 +52,7 @@ Forwarded: no
  };
 --- a/config.h
 +++ b/config.h
-@@ -58,6 +58,11 @@
+@@ -59,6 +59,11 @@
  	CONFIG_AUTH_MODE,
  	CONFIG_CA_FILE,
  	CONFIG_CA_DIR,
@@ -64,9 +64,9 @@ Forwarded: no
  	LAST_CONFIG
  };
  
---- a/vpnc-script.in
-+++ b/vpnc-script.in
-@@ -403,8 +403,9 @@
+--- a/vpnc-script
++++ b/vpnc-script
+@@ -519,8 +519,9 @@
  		else # can't open /dev/net/tun
  			test -e /proc/sys/kernel/modprobe && `cat /proc/sys/kernel/modprobe` tun 2>/dev/null
  			# fix for broken devfs in kernel 2.6.x
@@ -78,7 +78,7 @@ Forwarded: no
  				ln -sf /dev/misc/net/tun /dev/net/tun
  			fi
  			# make sure tun device exists
-@@ -440,6 +441,27 @@
+@@ -557,6 +558,27 @@
  }
  
  do_connect() {
@@ -106,8 +106,8 @@ Forwarded: no
  	if [ -n "$CISCO_BANNER" ]; then
  		echo "Connect Banner:"
  		echo "$CISCO_BANNER" | while read LINE ; do echo "|" "$LINE" ; done
-@@ -468,12 +490,30 @@
- 		set_default_route
+@@ -607,12 +629,30 @@
+ 		set_ipv6_default_route
  	fi
  
 -	if [ -n "$INTERNAL_IP4_DNS" ]; then
@@ -139,7 +139,7 @@ Forwarded: no
  	if [ -n "$CISCO_SPLIT_INC" ]; then
  		i=0
  		while [ $i -lt $CISCO_SPLIT_INC ] ; do
-@@ -498,8 +538,17 @@
+@@ -655,8 +695,17 @@
  
  	del_vpngateway_route
  
@@ -161,7 +161,7 @@ Forwarded: no
  }
 --- a/vpnc.c
 +++ b/vpnc.c
-@@ -360,6 +360,9 @@
+@@ -377,6 +377,9 @@
  {
  	setenv("VPNGATEWAY", inet_ntoa(s->dst), 1);
  	setenv("reason", "connect", 1);

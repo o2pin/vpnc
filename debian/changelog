@@ -2,8 +2,8 @@ vpnc (0.5.3r512-1) unstable; urgency=low
 
   * Imported new upstream SVN snapshot with support for Fritz!Box routers
     (closes: #629646), fixed MTU when no default route (closes: #525389).
-  * Refreshed patches, dropped 07_bug496718.patch, 08_bug640978.patch (applied
-    upstream), added fix_spelling_errors.patch, unused-but-set-parameter.patch.
+  * Refreshed patches, dropped 07_bug496718.patch, 08_bug640978.patch 
+    (applied upstream).
   * Added missing ${perl:Depends}.
   * Updated debian/copyright to reflect recent work in SVN.
   * Updated README.Debian, clarified security warning (closes: #442629).

@@ -4,7 +4,7 @@ Origin: http://lists.unix-ag.uni-kl.de/pipermail/vpnc-devel/2011-September/00360
 
 --- a/Makefile
 +++ b/Makefile
-@@ -117,8 +117,8 @@
+@@ -114,7 +114,7 @@
  	rm -rf vpnc-$*
  
  test : all
@@ -13,4 +13,3 @@ Origin: http://lists.unix-ag.uni-kl.de/pipermail/vpnc-devel/2011-September/00360
  	#./test-crypto test/cert.pem test/cert0.crt test/cert1.crt test/cert2.crt test/root.crt
  
  dist : VERSION vpnc.8 vpnc-$(RELEASE_VERSION).tar.gz
- 
