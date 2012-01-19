@@ -7,6 +7,7 @@ vpnc (0.5.3r512-1) unstable; urgency=low
   * Added missing ${perl:Depends}.
   * Updated debian/copyright to reflect recent work in SVN.
   * Updated README.Debian, clarified security warning (closes: #442629).
+  * Properly remove obsolete conffile example.conf on upgrade.
 
  -- Florian Schlichting <fschlich@zedat.fu-berlin.de>  Mon, 09 Jan 2012 21:57:57 +0100
 

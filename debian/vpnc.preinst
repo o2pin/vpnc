@@ -1,0 +1,2 @@
+dpkg-maintscript-helper rm_conffile /etc/vpnc/example.conf 0.5.3r449-3 -- "$@"
+#DEBHELPER#
