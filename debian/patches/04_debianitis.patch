@@ -66,18 +66,6 @@ Forwarded: no
  
 --- a/vpnc-script
 +++ b/vpnc-script
-@@ -519,8 +519,9 @@
- 		else # can't open /dev/net/tun
- 			test -e /proc/sys/kernel/modprobe && `cat /proc/sys/kernel/modprobe` tun 2>/dev/null
- 			# fix for broken devfs in kernel 2.6.x
--			if [ "`readlink /dev/net/tun`" = misc/net/tun \
--				-a ! -e /dev/net/misc/net/tun -a -e /dev/misc/net/tun ] ; then
-+      if [ "`readlink /dev/net/tun`" = misc/net/tun ] && \
-+                [ ! -e /dev/net/misc/net/tun ] && \
-+                [ -e /dev/misc/net/tun ] ; then
- 				ln -sf /dev/misc/net/tun /dev/net/tun
- 			fi
- 			# make sure tun device exists
 @@ -557,6 +558,27 @@
  }
  

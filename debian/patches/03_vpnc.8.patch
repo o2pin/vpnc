@@ -1,49 +1,19 @@
-Description: Add "ADVANCED USAGE" paragraph to vpnc(8) manpage
- These are extra features added by Debian.
-Author: Eduard Bloch <blade@debian.org>
+Description: Remove obsolete TODO from vpnc(8) manpage
+Author: Florian Schlichting <fschlich@zedat.fu-berlin.de>
 Forwarded: no
 
-diff -urNad vpnc-0.5.1r254~/vpnc.8.template vpnc-0.5.1r254/vpnc.8.template
---- vpnc-0.5.1r254~/vpnc.8.template	2007-10-18 09:42:04.000000000 +0200
-+++ vpnc-0.5.1r254/vpnc.8.template	2007-10-18 09:44:36.000000000 +0200
-@@ -187,6 +191,40 @@
+--- a/vpnc.8.template
++++ b/vpnc.8.template
+@@ -187,12 +187,6 @@
  disabling /etc/resolv.conf rewriting is documented in the README of the
  vpnc package.
  
-+.SH ADVANCED USAGE
-+The vpnc-connect script shipped with Debian has some additional
-+features:
-+.IP "Custom route setting"
-+By default, the default route is deleted after connection and replaced
-+with the new one (going trough the VPN tunnel device). However, some
-+people wish to limit the target address range to few IP ranges.
-+This can be done using the config directive
-+.B Target networks
-+in the config file. For example:
-+.RS
-+.PD 0
-+Target networks 123.234.210.0/24 10.1.0.0/16
-+.PD
-+.RE
-+.IP "Multiple config profiles management"
-+You can have multiple config files and select one on connection by
-+specifying a short profile name instead of a config file path. In this
-+case, the file
-+.I /etc/vpnc/PROFILE.conf
-+is used as config file (where PROFILE is the short profile name).
-+.IP "/etc/resolv.conf update"
-+If the package 
-+.B resolvconf
-+is installed and the VPN gateway sends some DNS server data, the
-+script will use resolution to integrate the received data into
-+.I /etc/resolv.conf.
-+To disable this behaviour, set the config directive
-+.I DNSUpdate
-+to the
-+.I "no"
-+value.
-+
-+
- .SH TODO
- .PD 0
- Certificate support (Pre-Shared-Key + XAUTH is known to be insecure).
+-.SH TODO
+-.PD 0
+-Certificate support (Pre-Shared-Key + XAUTH is known to be insecure).
+-.P
+-Further points can be found in the TODO file.
+-.PD
+ 
+ .SH AUTHOR
+ This man-page has been written by Eduard Bloch <blade(at)debian.org> and
