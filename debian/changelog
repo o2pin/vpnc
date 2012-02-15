@@ -10,6 +10,7 @@ vpnc (0.5.3r512-1) unstable; urgency=low
   * Properly remove obsolete conffile example.conf on upgrade.
   * Simplify debian/rules (PREFIX ony needed for install - thanks gregoa).
   * Added a get-orig-source target to debian/rules.
+  * Bumped debhelper compatibility to level 9 for extra hardening build flags.
 
  -- Florian Schlichting <fschlich@zedat.fu-berlin.de>  Mon, 09 Jan 2012 21:57:57 +0100
 
