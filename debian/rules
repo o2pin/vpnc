@@ -1,5 +1,18 @@
 #!/usr/bin/make -f
 
+VERSION=$(shell dpkg-parsechangelog | sed -rne 's,^Version: ([^-]+).*,\1,p')
+SVN_REV=$(shell dpkg-parsechangelog | sed -rne 's,^Version: .*r([^-]+).*,\1,p')
+SVN_URL=http://svn.unix-ag.uni-kl.de/vpnc/trunk/
+ORIGDIR=vpnc-$(VERSION)
+TARNAME=vpnc_$(VERSION).orig.tar.gz
+
+get-orig-source:
+	rm -rf $(ORIGDIR)
+	git svn clone -r $(SVN_REV) $(SVN_URL) $(ORIGDIR)
+	rm -rf $(ORIGDIR)/.git
+	tar czf ../$(TARNAME) $(ORIGDIR)
+	rm -rf $(ORIGDIR)
+
 %:
 	dh $@
 
