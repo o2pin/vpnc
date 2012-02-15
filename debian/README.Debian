@@ -21,9 +21,19 @@ use vpnc-script-connect-action and vpnc-script-disconnect-action scripts to set
 them separately (see below), which may or may not be wanted depending on your
 setup. Or you can symlink them to have the same config in both phases.
 
-The same applies to the disabling of DNS data update. The old methods are
-preserved with compatibility wrappers for the near future but should be avoided
-with new installations.
+The same applies to the disabling of DNS data updates. The old methods are
+preserved with compatibility wrappers until after the release of wheezy, and
+should be avoided with new installations.
+
+
+NETWORK MANAGER AND VPNC
+========================
+
+NetworkManager does not play well with other programs that modify routes and
+interfaces outside of its framework. This means your VPN will go down as soon
+as NetworkManager decides to reconfigure your internet connection, possibly in
+response to discovering the newly-established VPN. Please install the
+network-manager-vpnc package for proper NetworkManager integration.
 
 
 CONFIGURATION

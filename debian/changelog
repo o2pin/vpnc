@@ -6,7 +6,8 @@ vpnc (0.5.3r512-1) unstable; urgency=low
     (applied upstream).
   * Added missing ${perl:Depends}.
   * Updated debian/copyright to reflect recent work in SVN.
-  * Updated README.Debian, clarified security warning (closes: #442629).
+  * Updated README.Debian, clarified security warning (closes: #442629) and
+    added a note on NetworkManager integration.
   * Properly remove obsolete conffile example.conf on upgrade.
   * Simplify debian/rules (PREFIX ony needed for install - thanks gregoa).
   * Added a get-orig-source target to debian/rules.
@@ -14,7 +15,7 @@ vpnc (0.5.3r512-1) unstable; urgency=low
   * Added fix_makefile_VERSION.patch so that vpnc will report the correct
     version including SVN revision.
 
- -- Florian Schlichting <fschlich@zedat.fu-berlin.de>  Mon, 09 Jan 2012 21:57:57 +0100
+ -- Florian Schlichting <fschlich@zedat.fu-berlin.de>  Wed, 15 Feb 2012 23:34:20 +0100
 
 vpnc (0.5.3r449-3) unstable; urgency=low
 
