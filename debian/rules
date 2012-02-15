@@ -1,15 +1,10 @@
 #!/usr/bin/make -f
 
-PREFIX=/usr
-
 %:
 	dh $@
 
-override_dh_auto_build:
-	dh_auto_build -- PREFIX=${PREFIX}
- 
 override_dh_auto_install:
-	dh_auto_install -- PREFIX=${PREFIX} install
+	dh_auto_install -- PREFIX=/usr install
 	rm ./debian/vpnc/usr/share/doc/vpnc/COPYING
 
 override_dh_fixperms:
