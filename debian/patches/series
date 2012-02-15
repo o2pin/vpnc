@@ -1,3 +1,4 @@
 03_vpnc.8.patch
 04_debianitis.patch
 fix_make_test.patch
+fix_makefile_VERSION.patch
