@@ -1,6 +1,7 @@
-Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Source: http://svn.unix-ag.uni-kl.de/vpnc/
 Upstream-Name: vpnc
+Upstream-Contact: vpnc-devel@unix-ag.uni-kl.de
 
 Files: *
 Copyright: 1999, Pierre Beyssac
