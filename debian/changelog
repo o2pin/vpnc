@@ -1,9 +1,11 @@
-vpnc (0.5.3r512-2) UNRELEASED; urgency=low
+vpnc (0.5.3r512-2) unstable; urgency=low
 
-  * Turn maintainer scripts into proper shell scripts (thanks, Johannes
-    Schauer!).
+  * Turned maintainer scripts into proper shell scripts (thanks, Johannes
+    Schauer!). Closes: #663206
+  * Added a pre-dependency on dpkg (>= 1.15.7.2) for dpkg-maintscript-helper.
+  * Bumped Standards-Version to 3.9.3.
 
- -- Florian Schlichting <fschlich@zedat.fu-berlin.de>  Fri, 09 Mar 2012 15:02:21 +0000
+ -- Florian Schlichting <fschlich@zedat.fu-berlin.de>  Tue, 13 Mar 2012 18:50:35 +0100
 
 vpnc (0.5.3r512-1) unstable; urgency=low
 
