@@ -9,6 +9,7 @@ Homepage: http://www.unix-ag.uni-kl.de/~massar/vpnc/
 Package: vpnc
 Architecture: any
 Suggests: resolvconf
+Pre-Depends: dpkg (>= 1.15.7.2)
 Depends: ${shlibs:Depends}, ${misc:Depends}, ${perl:Depends}
 Recommends: iproute
 Description: Cisco-compatible VPN client
