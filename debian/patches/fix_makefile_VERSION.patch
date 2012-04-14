@@ -1,7 +1,7 @@
-Description: ensure that Makefile defines a proper vpnc version, including SVN revision
- mk-version contains multiple bashisms and needs to be called inside an svn
- checkout (or full git-svn clone) in order to report the correct SVN revision.
- Since we have this info in debian/changelog, take it from there instead.
+Description: ensure that Makefile defines a proper vpnc version, including SVN and Debian revision
+ mk-version needs to be called inside an svn checkout (or full git-svn clone)
+ in order to report the correct SVN revision.  Since we have this info in
+ debian/changelog, take it from there instead.
 Author: Florian Schlichting <fschlich@zedat.fu-berlin.de>
 Forwarded: not-needed
 
@@ -12,7 +12,7 @@ Forwarded: not-needed
  BINOBJS = $(addsuffix .o,$(BINS))
  BINSRCS = $(addsuffix .c,$(BINS))
 -VERSION := $(shell sh mk-version)
-+VERSION=$(shell dpkg-parsechangelog | sed -rne 's,^Version: ([^-]+).*,\1,p')
++VERSION=$(shell dpkg-parsechangelog | sed -rne 's,^Version: ([^ ]+).*,\1,p')
  RELEASE_VERSION := $(shell cat VERSION)
  
- CC=gcc
+ CC ?= gcc
