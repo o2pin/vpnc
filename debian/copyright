@@ -18,9 +18,10 @@ Copyright: 1999, Pierre Beyssac
  2006, Daniel Roethlisberger
  2006-2007, Dan Villiom Podlaski Christiansen
  2006-2007, Wolfram Sang <wolfram@the-dreams.de>
- 2007-2011, Joerg Mayer <jmayer@loplof.de>
+ 2007-2014, Joerg Mayer <jmayer@loplof.de>
  2007, Paolo Zarpellon <paolo.zarpellon@gmail.com>
- 2009-2012, Antonio Borneo <borneo.antonio@gmail.com>
+ 2009-2014, Antonio Borneo <borneo.antonio@gmail.com>
+ 2009-2014, David Woodhouse <dwmw2@infradead.org>
 License: GPL-2+
 
 Files: dh.* math_group.*
@@ -32,7 +33,7 @@ Files: debian/*
 Copyright: 2003-2008, Eduard Bloch <blade@debian.org>
  2008-2010, Eric Warmenhoven <warmenhoven@debian.org>
  2010, Reinhard Tartler <siretart@tauware.de>
- 2011-2012, Florian Schlichting <fsfs@debian.org>
+ 2011-2014, Florian Schlichting <fsfs@debian.org>
 License: GPL-2+
 
 License: BSD-2-clause
