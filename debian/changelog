@@ -1,3 +1,12 @@
+vpnc (0.5.3r550-1) UNRELEASED; urgency=medium
+
+  * Import Upstream version 0.5.3r550
+    + ignores leading/trailing whitespace in config file (closes: #595660)
+    + fetches split DNS information (LP: 954747)
+  * Add VCS-* fields
+
+ -- Florian Schlichting <fsfs@debian.org>  Fri, 05 Sep 2014 22:54:51 +0200
+
 vpnc (0.5.3r512-2.1) unstable; urgency=medium
 
   * Non-maintainer upload.
