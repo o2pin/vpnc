@@ -32,7 +32,7 @@ Files: debian/*
 Copyright: 2003-2008, Eduard Bloch <blade@debian.org>
  2008-2010, Eric Warmenhoven <warmenhoven@debian.org>
  2010, Reinhard Tartler <siretart@tauware.de>
- 2011-2012, Florian Schlichting <fschlich@zedat.fu-berlin.de>
+ 2011-2012, Florian Schlichting <fsfs@debian.org>
 License: GPL-2+
 
 License: BSD-2-clause

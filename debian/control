@@ -1,7 +1,7 @@
 Source: vpnc
 Section: net
 Priority: extra
-Maintainer: Florian Schlichting <fschlich@zedat.fu-berlin.de>
+Maintainer: Florian Schlichting <fsfs@debian.org>
 Build-Depends: debhelper (>= 9), libgnutls28-dev, libgcrypt20-dev,
  pkg-config
 Standards-Version: 3.9.3

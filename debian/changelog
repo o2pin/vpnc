@@ -6,6 +6,7 @@ vpnc (0.5.3r550-1) UNRELEASED; urgency=medium
     + includes 03_vpnc.8.patch
   * Add VCS-* fields
   * Update fix_makefile_VERSION.patch to report full Debian package version
+  * Email change: Florian Schlichting -> fsfs@debian.org
 
  -- Florian Schlichting <fsfs@debian.org>  Fri, 05 Sep 2014 22:54:51 +0200
 
