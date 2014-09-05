@@ -1,3 +1,11 @@
+vpnc (0.5.3r512-2.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Rebuild against libgnutls28-dev, add missing build-dependency on
+    libgcrypt20-dev. Closes: #747538
+
+ -- Andreas Metzler <ametzler@debian.org>  Sat, 16 Aug 2014 18:41:36 +0200
+
 vpnc (0.5.3r512-2) unstable; urgency=low
 
   * Turned maintainer scripts into proper shell scripts (thanks, Johannes
