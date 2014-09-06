@@ -1,0 +1,35 @@
+Description: use the vpnc-script from vpnc-scripts by default
+Author: Florian Schlichting <fsfs@debian.org>
+Forwarded: not-necessary
+
+--- a/README
++++ b/README
+@@ -76,7 +76,7 @@
+ 
+ Please note that vpnc itself does NOT setup routing. You need to do this
+ yourself, or use --script "Script" in the config file.
+-The default script is /etc/vpnc/vpnc-script which sets a default route
++The default script is /usr/share/vpnc-scripts/vpnc-script which sets a default route
+ to the remote network, or if the Concentrator provided split-network
+ settings, these are used to setup routes.
+ 
+@@ -134,7 +134,7 @@
+ CISCO_SPLIT_INC_0_SPORT=0
+ CISCO_SPLIT_INC_0_DPORT=0
+ 
+-. /etc/vpnc/vpnc-script
++. /usr/share/vpnc-scripts/vpnc-script
+ ------------------------------
+ 
+ Store this example script, for example in /etc/vpnc/custom-script,
+--- a/config.c
++++ b/config.c
+@@ -362,7 +362,7 @@
+ 
+ static const char *config_def_script(void)
+ {
+-	return "/etc/vpnc/vpnc-script";
++	return "/usr/share/vpnc-scripts/vpnc-script";
+ }
+ 
+ static const char *config_def_pid_file(void)

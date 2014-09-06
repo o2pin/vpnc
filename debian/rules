@@ -19,6 +19,7 @@ get-orig-source:
 override_dh_auto_install:
 	dh_auto_install -- PREFIX=/usr install
 	rm ./debian/vpnc/usr/share/doc/vpnc/COPYING
+	rm ./debian/vpnc/etc/vpnc/vpnc-script
 
 override_dh_fixperms:
 	dh_fixperms
