@@ -1,0 +1,21 @@
+vpnc (0.5.3r550-1) unstable; urgency=medium
+
+  The Debian-specific "Target Networks" and "DNSUpdate" extensions, deprecated
+  in wheezy, have now been removed. If you were still using them, please see
+  README.Debian on how to upgrade your setup to use the upstream facilities
+  instead.
+
+  Another Debian-specific extension, action scripts called from vpnc-script
+  before and after connect and disconnect processing, have been integrated
+  upstream as hooks that call any script found in a specific directory. The
+  package upgrade will make an attempt to move existing scripts to the new
+  location, e.g. /etc/vpnc/vpnc-script-connect-action will be moved to
+  /etc/vpnc/connect.d/vpnc-script-connect-action.
+    
+  Finally, vpnc now depends on the vpnc-scripts package to provide an
+  up-to-date vpnc-script for both vpnc and openconnect. If you made
+  modifications to vpnc-script, they have been backed up, but are no longer
+  active. While you can reinstate your own script, you are encouraged to
+  implement your modifications as separate hook scripts.
+
+ -- Florian Schlichting <fsfs@debian.org>  Sat, 06 Sep 2014 22:53:40 +0200
