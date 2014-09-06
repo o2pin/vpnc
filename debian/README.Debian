@@ -11,8 +11,8 @@ details.
 UPGRADE NOTES
 =============
 
-If you have been using Debian-specific extensions with "Target networks" and
-"DNSupdate" directives, consider changing your praxis to use the official
+The Debian-specific extensions "Target networks" and "DNSupdate" were
+deprecated in wheezy and have been removed in jessie. Please use the
 upstream configuration way now. See /usr/share/doc/vpnc/README.gz file for
 details about replacing network routes with custom ones using the variables of
 vpnc-script. You can either wrap /etc/vpnc/vpnc-script into a custom script
@@ -100,6 +100,3 @@ and don't assume your connection to be more secure. If however
 establishing a VPN connection requires a certificate identifying the
 server in addition to a group key and your password (auth-mode hybrid),
 you should be safe.
-
- -- Eduard Bloch -- Fri, 14 Apr 2006 23:08:54 +0200
- -- Florian Schlichting --  Fri, 13 Jan 2012 19:56:41 +0200

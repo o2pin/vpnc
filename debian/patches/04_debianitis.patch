@@ -1,69 +1,7 @@
-Description: "Debian specific" changes: DNS_UPDATE, TARGET_NETWORKS, /etc/vpnc/vpnc-script-post-[dis]connect-action
+Description: "Debian specific" changes: /etc/vpnc/vpnc-script-post-[dis]connect-action
 Author: Eduard Bloch <blade@debian.org>
 Forwarded: no
 
---- a/config.c
-+++ b/config.c
-@@ -205,6 +205,16 @@
- 	return "0.0.0.0/0.0.0.0";
- }
- 
-+static const char *config_def_networks_list(void)
-+{
-+	return "";
-+}
-+
-+static const char *config_def_dns_update(void)
-+{
-+	return "Yes";
-+}
-+
- static const struct config_names_s {
- 	enum config_enum nm;
- 	const int needsArgument;
-@@ -468,7 +478,27 @@
- 		"<target network/netmask>",
- 		"Target network in dotted decimal or CIDR notation\n",
- 		config_def_target_network
--	}, {
-+	}, 
-+     {
-+        CONFIG_DNS_UPDATE, 1, 1,
-+        "--dns-update",
-+        "DNSUpdate",
-+        "",
-+        "DEPRECATED extension, see README.Debian for details",
-+        config_def_dns_update
-+     }, 
-+ 
-+     {
-+        CONFIG_TARGET_NETWORKS, 1, 1,
-+        "--target-networks",
-+        "Target Networks",
-+        NULL,
-+        "DEPRECATED extension, see README.Debian for details",
-+        config_def_networks_list
-+     }, 
-+ 
-+ 
-+    {
- 		0, 0, 0, NULL, NULL, NULL, NULL, NULL
- 	}
- };
---- a/config.h
-+++ b/config.h
-@@ -59,6 +59,11 @@
- 	CONFIG_AUTH_MODE,
- 	CONFIG_CA_FILE,
- 	CONFIG_CA_DIR,
-+
-+
-+  CONFIG_DNS_UPDATE,
-+  CONFIG_TARGET_NETWORKS,
-+
- 	LAST_CONFIG
- };
- 
 --- a/vpnc-script
 +++ b/vpnc-script
 @@ -557,6 +558,27 @@
@@ -75,20 +13,6 @@ Forwarded: no
 +      if [ -r /etc/vpnc/vpnc-script-connect-action ] ; then
 +	 . /etc/vpnc/vpnc-script-connect-action
 +      fi
-+      # backwards compatibility mapping for old extensions
-+      if test "$TARGET_NETWORKS" ; then
-+	 i=0
-+	 for network in $TARGET_NETWORKS ; do
-+	    eval CISCO_SPLIT_INC_${i}_ADDR=`echo $network | cut -f1 -d/`
-+	    eval CISCO_SPLIT_INC_${i}_MASKLEN=`echo $network | cut -f2 -d/`
-+	    eval CISCO_SPLIT_INC_${i}_MASK=$( perl -e '$ARGV[0]=~s,.*/,,;$m=(2**$ARGV[0]-1)<<(32-$ARGV[0]);printf "%d.%d.%d.%d\n", $m>>24 & 0xff, $m>>16 & 0xff, $m>>8 & 0xff, $m & 0xff;' $network )
-+	    eval CISCO_SPLIT_INC_${i}_PROTOCOL=0
-+	    eval CISCO_SPLIT_INC_${i}_SPORT=0
-+	    eval CISCO_SPLIT_INC_${i}_DPORT=0
-+	    i=`expr $i + 1`
-+	 done
-+	 CISCO_SPLIT_INC=$i
-+      fi
 +      ## end Debian specific
 +
  	if [ -n "$CISCO_BANNER" ]; then
@@ -98,17 +22,8 @@ Forwarded: no
  		set_ipv6_default_route
  	fi
  
--	if [ -n "$INTERNAL_IP4_DNS" ]; then
--		$MODIFYRESOLVCONF
-+	case "$DNS_UPDATE" in
-+	   *no|*NO|*No|*nO)
-+	   ;;
-+	   *)
-+	   if [ -n "$INTERNAL_IP4_DNS" ]; then
-+	      $MODIFYRESOLVCONF
-+	   fi
-+	   ;;
-+	esac
+ 	if [ -n "$INTERNAL_IP4_DNS" ]; then
+ 		$MODIFYRESOLVCONF
 +
 +	if [ -r /etc/vpnc/vpnc-script-post-connect-action ] ; then
 +	   . /etc/vpnc/vpnc-script-post-connect-action
@@ -131,31 +46,10 @@ Forwarded: no
  
  	del_vpngateway_route
  
--	if [ -n "$INTERNAL_IP4_DNS" ]; then
--		$RESTORERESOLVCONF
-+	case "$DNS_UPDATE" in
-+	   *no|*NO|*No|*nO)
-+	   ;;
-+	   *)
-+	   if [ -n "$INTERNAL_IP4_DNS" ]; then
-+	      $RESTORERESOLVCONF
-+	   fi
-+	   ;;
-+	esac
+ 	if [ -n "$INTERNAL_IP4_DNS" ]; then
+ 		$RESTORERESOLVCONF
 +	if [ -r /etc/vpnc/vpnc-script-post-disconnect-action ] ; then
 +	   . /etc/vpnc/vpnc-script-post-disconnect-action
  	fi
  	destroy_tun_device
  }
---- a/vpnc.c
-+++ b/vpnc.c
-@@ -377,6 +377,9 @@
- {
- 	setenv("VPNGATEWAY", inet_ntoa(s->dst), 1);
- 	setenv("reason", "connect", 1);
-+   // DEPRECATED, Debian specific
-+   setenv("DNS_UPDATE", config[CONFIG_DNS_UPDATE], 1);
-+   setenv("TARGET_NETWORKS", config[CONFIG_TARGET_NETWORKS], 1);
- 	system(config[CONFIG_SCRIPT]);
- }
- 
