@@ -1,29 +1,14 @@
 vpnc for Debian
 ===============
 
-The Debian version of vpnc has a few improvements compared to the
-upstream version, mainly in the daemon invocation script. The
-vpnc-connect script works with multiple "profile" files, so you can
-manage multiple configurations easily. See the vpnc-connect manpage for
-details.
-
-
-UPGRADE NOTES
-=============
-
 The Debian-specific extensions "Target networks" and "DNSupdate" were
 deprecated in wheezy and have been removed in jessie. Please use the
 upstream configuration way now. See /usr/share/doc/vpnc/README.gz file for
 details about replacing network routes with custom ones using the variables of
 vpnc-script. You can either wrap /etc/vpnc/vpnc-script into a custom script
 which presets those variables (like documented in the example in README.gz) or
-use vpnc-script-connect-action and vpnc-script-disconnect-action scripts to set
-them separately (see below), which may or may not be wanted depending on your
-setup. Or you can symlink them to have the same config in both phases.
-
-The same applies to the disabling of DNS data updates. The old methods are
-preserved with compatibility wrappers until after the release of wheezy, and
-should be avoided with new installations.
+use the newer connect and disconnect hooks from vpnc-script to set them
+separately (see below).
 
 
 NETWORK MANAGER AND VPNC
@@ -56,13 +41,16 @@ In order to use the DNS server reported by the VPN server, please install the
 resolvconf package.
 
 vpnc-script, which handles routing and DNS updates, can be customized by adding
-scripts to be run before and after connecting and disconnecting, respectively.
-The names of the scripts that will be sourced by /etc/vpnc/vpnc-script are:
+hook scripts to be run on initialisation as well as before and after connecting
+and disconnecting. The names of the directories from where these hook scripts
+will be sourced are:
 
-    /etc/vpnc/vpnc-script-connect-action
-    /etc/vpnc/vpnc-script-post-connect-action
-    /etc/vpnc/vpnc-script-disconnect-action
-    /etc/vpnc/vpnc-script-post-disconnect-action
+    /etc/vpnc/pre-init.d/
+    /etc/vpnc/connect.d/
+    /etc/vpnc/post-connect.d/
+    /etc/vpnc/disconnect.d/
+    /etc/vpnc/post-disconnect.d/
+    /etc/vpnc/reconnect.d/ (not currently used by vpnc)
 
 See the comments at the top of vpnc-script for the environment variables you
 have access to.
