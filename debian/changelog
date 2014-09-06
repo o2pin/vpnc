@@ -1,4 +1,4 @@
-vpnc (0.5.3r550-1) UNRELEASED; urgency=medium
+vpnc (0.5.3r550-1) unstable; urgency=medium
 
   * Import Upstream version 0.5.3r550
     + ignores leading/trailing whitespace in config file (closes: #595660)
@@ -7,8 +7,15 @@ vpnc (0.5.3r550-1) UNRELEASED; urgency=medium
   * Add VCS-* fields
   * Update fix_makefile_VERSION.patch to report full Debian package version
   * Email change: Florian Schlichting -> fsfs@debian.org
+  * Update copyright holders and years
+  * Remove deprecated "Target networks" and "DNSupdate" extensions
+  * Move user-created connect-action scripts to the new hook directories
+  * Use vpnc-script from the vpnc-scripts package (closes: #673648)
+  * Add a NEWS file to alert people with non-default configurations
+  * Drop fix_make_test.patch, cert issue fixed upstream
+  * Declare compliance with Debian Policy 3.9.5
 
- -- Florian Schlichting <fsfs@debian.org>  Fri, 05 Sep 2014 22:54:51 +0200
+ -- Florian Schlichting <fsfs@debian.org>  Sun, 07 Sep 2014 00:18:19 +0200
 
 vpnc (0.5.3r512-2.1) unstable; urgency=medium
 
