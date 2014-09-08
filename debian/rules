@@ -6,6 +6,8 @@ SVN_URL=http://svn.unix-ag.uni-kl.de/vpnc/trunk/
 ORIGDIR=vpnc-$(VERSION)
 TARNAME=vpnc_$(VERSION).orig.tar.gz
 
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
 get-orig-source:
 	rm -rf $(ORIGDIR)
 	git svn clone -r $(SVN_REV) $(SVN_URL) $(ORIGDIR)
