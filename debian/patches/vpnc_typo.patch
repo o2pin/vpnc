@@ -1,0 +1,14 @@
+From: Christian Hesse <mail@eworm.de>
+Subject: [vpnc-devel] fix type in config.c
+
+--- a/config.c
++++ b/config.c
+@@ -1034,7 +1034,7 @@
+ 	}
+ 
+ 	if (!config[CONFIG_IPSEC_GATEWAY])
+-		error(1, 0, "missing IPSec gatway address");
++		error(1, 0, "missing IPSec gateway address");
+ 	if (!config[CONFIG_IPSEC_ID])
+ 		error(1, 0, "missing IPSec ID");
+ 	if (!config[CONFIG_IPSEC_SECRET])
