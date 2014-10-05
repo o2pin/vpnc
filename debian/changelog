@@ -1,3 +1,11 @@
+vpnc (0.5.3r550-2) unstable; urgency=medium
+
+  * Enable PIE and BINDNOW hardening as suggested by Markus
+  * Add vpnc_typo.patch
+  * Declare compliance with Debian Policy 3.9.6
+
+ -- Florian Schlichting <fsfs@debian.org>  Sun, 05 Oct 2014 22:44:21 +0200
+
 vpnc (0.5.3r550-1) unstable; urgency=medium
 
   * Import Upstream version 0.5.3r550
