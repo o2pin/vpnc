@@ -1,3 +1,25 @@
+vpnc (0.5.3r550-3) unstable; urgency=medium
+
+  [ John-John Tedro ]
+  * Add bug_799429.patch (closes: #799429)
+
+  [ Helmut Grohne ]
+  * Fix FTCBFS: Use triplet-prefixed build tools (closes: #839015)
+
+  [ Dan Lenski ]
+  * Add Mihai Maties dpd_big-endian.patch LP: #700767
+  * Add Dan Lenski's restore_original_cwd_after_vpnc_main_loop.patch
+    LP: #1612100 closes: #833988
+
+  [ Florian Schlichting ]
+  * Recommend iproute2 instead of transitional iproute (closes: #824682)
+  * Declare compliance with Debian Policy 3.9.8
+  * Use secure URIs for Homepage and VCS fields
+  * Add debhelper and dpkg-dev minimum versions for restriction formula
+    support, drop pre-dependency on dpkg version satisfied in oldstable
+
+ -- Florian Schlichting <fsfs@debian.org>  Wed, 23 Nov 2016 21:40:52 +0100
+
 vpnc (0.5.3r550-2) unstable; urgency=medium
 
   * Enable PIE and BINDNOW hardening as suggested by Markus
