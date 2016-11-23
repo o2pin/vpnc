@@ -1,0 +1,47 @@
+From: Dan Lenski <dlenski@gmail.com>
+Subject: restore original cwd after vpnc_main_loop()
+Date: Sun Aug 7 02:01:07 CEST 2016
+Origin: http://lists.unix-ag.uni-kl.de/pipermail/vpnc-devel/2016-August/004200.html
+
+Index: vpnc-debian.git/tunip.c
+===================================================================
+--- vpnc-debian.git.orig/tunip.c
++++ vpnc-debian.git/tunip.c
+@@ -53,6 +53,7 @@
+  *
+  */
+ 
++#define _GNU_SOURCE
+ #include <sys/types.h>
+ #include <sys/socket.h>
+ #include <errno.h>
+@@ -985,6 +986,7 @@ void vpnc_doit(struct sa_block *s)
+ 	struct encap_method meth;
+ 
+ 	const char *pidfile = config[CONFIG_PID_FILE];
++	char *cwd;
+ 
+ 	switch (s->ipsec.encap_mode) {
+ 		case IPSEC_ENCAP_TUNNEL:
+@@ -1038,6 +1040,10 @@ void vpnc_doit(struct sa_block *s)
+ 	signal(SIGINT, killit);
+ 	signal(SIGTERM, killit);
+ 
++	/* save cwd */
++	cwd = get_current_dir_name();
++	assert(cwd != NULL);
++
+ 	chdir("/");
+ 
+ 	if (!opt_nd) {
+@@ -1067,6 +1073,10 @@ void vpnc_doit(struct sa_block *s)
+ 
+ 	vpnc_main_loop(s);
+ 
++	/* restore cwd */
++	chdir(cwd);
++	free(cwd);
++
+ 	if (pidfile)
+ 		unlink(pidfile); /* ignore errors */
+ }
