@@ -1,5 +1,14 @@
 #!/usr/bin/make -f
 
+include /usr/share/dpkg/architecture.mk
+ifeq ($(origin CC),default)
+CC = $(DEB_HOST_GNU_TYPE)-gcc
+endif
+export CC
+export PKG_CONFIG=$(DEB_HOST_GNU_TYPE)-pkg-config
+ifneq ($(filter cross,$(DEB_BUILD_PROFILES)),)
+export VPNC = /usr/sbin/vpnc
+endif
 VERSION=$(shell dpkg-parsechangelog | sed -rne 's,^Version: ([^-]+).*,\1,p')
 SVN_REV=$(shell dpkg-parsechangelog | sed -rne 's,^Version: .*r([^-]+).*,\1,p')
 SVN_URL=http://svn.unix-ag.uni-kl.de/vpnc/trunk/

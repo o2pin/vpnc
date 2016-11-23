@@ -1,0 +1,52 @@
+From: Helmut Grohne <helmut@subdivi.de>
+Subject: cross compilation support
+
+* Make pkg-config substitutable to provision it as <triplet>-pkg-config.
+* Make the vpnc used by makeman.pl substitutable to use the build arch tool.
+
+Index: vpnc-0.5.3r550/Makefile
+===================================================================
+--- vpnc-0.5.3r550.orig/Makefile
++++ vpnc-0.5.3r550/Makefile
+@@ -41,8 +41,9 @@
+ # GPL incompliant though.
+ #OPENSSL_GPL_VIOLATION=yes
+ 
+-CRYPTO_LDADD = $(shell pkg-config --libs gnutls)
+-CRYPTO_CFLAGS = $(shell pkg-config --cflags gnutls) -DCRYPTO_GNUTLS
++PKG_CONFIG ?= pkg-config
++CRYPTO_LDADD = $(shell $(PKG_CONFIG) --libs gnutls)
++CRYPTO_CFLAGS = $(shell $(PKG_CONFIG) --cflags gnutls) -DCRYPTO_GNUTLS
+ CRYPTO_SRCS = crypto-gnutls.c
+ 
+ ifeq ($(OPENSSL_GPL_VIOLATION), yes)
+@@ -67,6 +68,7 @@
+ CPPFLAGS += -DVERSION=\"$(VERSION)\"
+ LDFLAGS ?= -g
+ LIBS += $(shell libgcrypt-config --libs) $(CRYPTO_LDADD)
++VPNC ?= ./vpnc
+ 
+ ifeq ($(shell uname -s), SunOS)
+ LIBS += -lnsl -lresolv -lsocket
+@@ -82,7 +84,7 @@
+ 	$(CC) $(LDFLAGS) -o $@ $^ $(LIBS)
+ 
+ vpnc.8 : vpnc.8.template makeman.pl vpnc
+-	./makeman.pl
++	./makeman.pl $(VPNC)
+ 
+ cisco-decrypt : cisco-decrypt.o decrypt-utils.o
+ 	$(CC) $(LDFLAGS) -o $@ $^ $(LIBS)
+Index: vpnc-0.5.3r550/makeman.pl
+===================================================================
+--- vpnc-0.5.3r550.orig/makeman.pl
++++ vpnc-0.5.3r550/makeman.pl
+@@ -21,7 +21,7 @@
+ use filetest qw(access);	# to always get errno-values on filetests
+ use POSIX    qw(strftime setlocale LC_ALL);
+ 
+-my $vpnc = './vpnc';
++my $vpnc = $ARGV[0];
+ -e $vpnc or die "$0: Can't find $vpnc. Did you compile it?\n";
+ -x $vpnc or die "$0: Can't execute $vpnc. Please check permissions.\n";
+ 
