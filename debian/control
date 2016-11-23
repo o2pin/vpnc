@@ -15,7 +15,7 @@ Suggests: resolvconf
 Pre-Depends: dpkg (>= 1.15.7.2)
 Depends: ${shlibs:Depends}, ${misc:Depends}, ${perl:Depends},
  vpnc-scripts
-Recommends: iproute
+Recommends: iproute2
 Description: Cisco-compatible VPN client
  vpnc is a VPN client compatible with cisco3000 VPN Concentrator (also
  known as Cisco's EasyVPN equipment). vpnc runs entirely in userspace
