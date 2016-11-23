@@ -5,9 +5,9 @@ Maintainer: Florian Schlichting <fsfs@debian.org>
 Build-Depends: debhelper (>= 9), libgnutls28-dev, libgcrypt20-dev,
  pkg-config, vpnc:native <cross>
 Standards-Version: 3.9.8
-Vcs-Browser: http://anonscm.debian.org/gitweb/?p=collab-maint/vpnc.git
-Vcs-Git: git://anonscm.debian.org/collab-maint/vpnc.git
-Homepage: http://www.unix-ag.uni-kl.de/~massar/vpnc/
+Vcs-Browser: https://anonscm.debian.org/cgit/collab-maint/vpnc.git
+Vcs-Git: https://anonscm.debian.org/git/collab-maint/vpnc.git
+Homepage: https://www.unix-ag.uni-kl.de/~massar/vpnc/
 
 Package: vpnc
 Architecture: any
