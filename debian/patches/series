@@ -3,3 +3,4 @@ fix_makefile_VERSION.patch
 vpnc_typo.patch
 bug_799429.patch
 cross.patch
+dpd_big-endian.patch
