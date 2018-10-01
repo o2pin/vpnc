@@ -1,3 +1,9 @@
+vpnc (0.5.3r550-4) UNRELEASED; urgency=medium
+
+  * d/copyright: Use https protocol in Format field
+
+ -- Ondřej Nový <onovy@debian.org>  Mon, 01 Oct 2018 10:18:54 +0200
+
 vpnc (0.5.3r550-3) unstable; urgency=medium
 
   [ John-John Tedro ]
