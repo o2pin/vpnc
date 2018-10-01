@@ -2,6 +2,7 @@ vpnc (0.5.3r550-4) UNRELEASED; urgency=medium
 
   * d/copyright: Use https protocol in Format field
   * d/control: Deprecating priority extra as per policy 4.0.1
+  * d/changelog: Remove trailing whitespaces
 
  -- Ondřej Nový <onovy@debian.org>  Mon, 01 Oct 2018 10:18:54 +0200
 
@@ -75,7 +76,7 @@ vpnc (0.5.3r512-1) unstable; urgency=low
 
   * Imported new upstream SVN snapshot with support for Fritz!Box routers
     (closes: #629646), fixed MTU when no default route (closes: #525389).
-  * Refreshed patches, dropped 07_bug496718.patch, 08_bug640978.patch 
+  * Refreshed patches, dropped 07_bug496718.patch, 08_bug640978.patch
     (applied upstream).
   * Added missing ${perl:Depends}.
   * Updated debian/copyright to reflect recent work in SVN.
@@ -147,7 +148,7 @@ vpnc (0.5.3-1) unstable; urgency=low
   * New upstream release (closes: #506265)
     + fixes bug in pcf2vpnc which causes too many spaces (closes: #456550)
     + fixes prompting for password even though it's in the configuration
-      file (closes: #492981) 
+      file (closes: #492981)
 
  -- Eric Warmenhoven <warmenhoven@debian.org>  Mon, 15 Dec 2008 17:52:20 -0800
 
@@ -226,7 +227,7 @@ vpnc (0.3.3+SVN20051028-3) unstable; urgency=low
   * 08_keepalive_and_rekeying.dpatch: patch for basic rekeying and keepalive
     support from Tomas Mraz <tmraz@redhat.com>
   * stronger permissions of /etc/vpnc/ and /etc/vpnc/example.conf to protect
-    careless users from making their login data world-readable 
+    careless users from making their login data world-readable
     (closes: #340105)
   * documented connect/disconnect hooks in README.Debian, thanks to Elmar
     Hoffmann (closes: #360704)
@@ -245,7 +246,7 @@ vpnc (0.3.3+SVN20051028-1) unstable; urgency=low
   * new upstream snapshot
     + includes a password string deobfuscater
     + a bash specific loop construct has been rewritten (closes: #335989)
-  * inserts another default default value into setup variables (now 
+  * inserts another default default value into setup variables (now
     really closes: #334203, #335518)
   * fallback to $configname.conf file scheme (closes: #335383)
   * vpnc-script tries to open the device for 10 seconds after the module has
@@ -263,9 +264,9 @@ vpnc (0.3.3+SVN20050909-5) unstable; urgency=low
 
 vpnc (0.3.3+SVN20050909-4) unstable; urgency=low
 
-  * added the magic [ words to the test commands in the new hooks 
+  * added the magic [ words to the test commands in the new hooks
     (closes: #333813)
- 
+
  -- Eduard Bloch <blade@debian.org>  Thu, 13 Oct 2005 12:47:15 +0200
 
 vpnc (0.3.3+SVN20050909-3) unstable; urgency=low
@@ -388,7 +389,7 @@ vpnc (0.2-rm+zomb.1-3) unstable; urgency=low
 
 vpnc (0.2-rm+zomb.1-2) unstable; urgency=low
 
-  * vpnc.c: Only warn about additional ("unknown") config directives in 
+  * vpnc.c: Only warn about additional ("unknown") config directives in
     debug mode (as it was done in -pre8 before)
   * vpnc-connect: adding explicite routes to VPNed DNS servers if needed
   * avoiding multi-line if-statements, report to break with some shell
@@ -428,7 +429,7 @@ vpnc (0.2-rm+zomb-pre7-3) unstable; urgency=low
 
 vpnc (0.2-rm+zomb-pre7-2) unstable; urgency=low
 
-  * vpnc-connect: allow customizable target routes in vpnc.conf 
+  * vpnc-connect: allow customizable target routes in vpnc.conf
     (closes: #225776)
   * vpnc.c: don't bother about unknown options unless --debug is used
   * merged relevant parts of the FreeBSD manpage Debian into out Linux
