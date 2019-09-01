@@ -1,12 +1,16 @@
 From: Dan Lenski <dlenski@gmail.com>
+Date: Sun, 7 Aug 2016 02:01:07 +0200
 Subject: restore original cwd after vpnc_main_loop()
-Date: Sun Aug 7 02:01:07 CEST 2016
-Origin: http://lists.unix-ag.uni-kl.de/pipermail/vpnc-devel/2016-August/004200.html
 
-Index: vpnc-debian.git/tunip.c
-===================================================================
---- vpnc-debian.git.orig/tunip.c
-+++ vpnc-debian.git/tunip.c
+Origin: http://lists.unix-ag.uni-kl.de/pipermail/vpnc-devel/2016-August/004200.html
+---
+ tunip.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/tunip.c b/tunip.c
+index 00d9e1c..e2ab9e2 100644
+--- a/tunip.c
++++ b/tunip.c
 @@ -53,6 +53,7 @@
   *
   */

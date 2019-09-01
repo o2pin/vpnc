@@ -1,4 +1,3 @@
-From b81680067887b054bd0d048bc5820604796c4c6e Mon Sep 17 00:00:00 2001
 From: Jeff Layton <jeff.layton@primarydata.com>
 Date: Fri, 26 Jun 2015 12:36:13 -0400
 Subject: [PATCH] vpnc: skip parsing responder lifetime payload
@@ -37,7 +36,7 @@ Signed-off-by: Jeff Layton <jeff.layton@primarydata.com>
  1 file changed, 11 insertions(+), 1 deletion(-)
 
 diff --git a/vpnc.c b/vpnc.c
-index 74814a6bb493..0612859e35c6 100644
+index a0c211b..75d6562 100644
 --- a/vpnc.c
 +++ b/vpnc.c
 @@ -1203,7 +1203,17 @@ static void lifetime_ike_process(struct sa_block *s, struct isakmp_attribute *a)
@@ -59,6 +58,3 @@ index 74814a6bb493..0612859e35c6 100644
  
  	if (a->next->af == isakmp_attr_16)
  		value = a->next->u.attr_16;
--- 
-2.4.3
-

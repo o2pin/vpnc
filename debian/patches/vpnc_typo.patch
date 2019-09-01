@@ -1,9 +1,16 @@
 From: Christian Hesse <mail@eworm.de>
+Date: Sun, 5 Oct 2014 22:52:36 +0200
 Subject: [vpnc-devel] fix type in config.c
 
+---
+ config.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/config.c b/config.c
+index df4362d..1c2db30 100644
 --- a/config.c
 +++ b/config.c
-@@ -1034,7 +1034,7 @@
+@@ -1034,7 +1034,7 @@ void do_config(int argc, char **argv)
  	}
  
  	if (!config[CONFIG_IPSEC_GATEWAY])

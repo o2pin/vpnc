@@ -1,13 +1,23 @@
-Description: ensure that Makefile defines a proper vpnc version, including SVN and Debian revision
- mk-version needs to be called inside an svn checkout (or full git-svn clone)
- in order to report the correct SVN revision.  Since we have this info in
- debian/changelog, take it from there instead.
-Author: Florian Schlichting <fsfs@debian.org>
-Forwarded: not-needed
+From: Florian Schlichting <fsfs@debian.org>
+Date: Wed, 15 Feb 2012 23:13:43 +0100
+Subject: ensure that Makefile defines a proper vpnc version,
+ including SVN and Debian revision
 
+Forwarded: not-needed
+Last-Update: 2014-09-06
+
+mk-version needs to be called inside an svn checkout (or full git-svn clone)
+in order to report the correct SVN revision.  Since we have this info in
+debian/changelog, take it from there instead.
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 69f5aca..2130cb3 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -57,7 +57,7 @@
+@@ -57,7 +57,7 @@ OBJS = $(addsuffix .o,$(basename $(SRCS)))
  CRYPTO_OBJS = $(addsuffix .o,$(basename $(CRYPTO_SRCS)))
  BINOBJS = $(addsuffix .o,$(BINS))
  BINSRCS = $(addsuffix .c,$(BINS))

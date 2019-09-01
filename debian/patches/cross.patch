@@ -1,14 +1,19 @@
 From: Helmut Grohne <helmut@subdivi.de>
+Date: Wed, 23 Nov 2016 21:19:38 +0100
 Subject: cross compilation support
 
 * Make pkg-config substitutable to provision it as <triplet>-pkg-config.
 * Make the vpnc used by makeman.pl substitutable to use the build arch tool.
+---
+ Makefile   | 8 +++++---
+ makeman.pl | 2 +-
+ 2 files changed, 6 insertions(+), 4 deletions(-)
 
-Index: vpnc-0.5.3r550/Makefile
-===================================================================
---- vpnc-0.5.3r550.orig/Makefile
-+++ vpnc-0.5.3r550/Makefile
-@@ -41,8 +41,9 @@
+diff --git a/Makefile b/Makefile
+index 2130cb3..f3d5fb8 100644
+--- a/Makefile
++++ b/Makefile
+@@ -41,8 +41,9 @@ DOCDIR=$(PREFIX)/share/doc/vpnc
  # GPL incompliant though.
  #OPENSSL_GPL_VIOLATION=yes
  
@@ -20,7 +25,7 @@ Index: vpnc-0.5.3r550/Makefile
  CRYPTO_SRCS = crypto-gnutls.c
  
  ifeq ($(OPENSSL_GPL_VIOLATION), yes)
-@@ -67,6 +68,7 @@
+@@ -67,6 +68,7 @@ CFLAGS +=  $(shell libgcrypt-config --cflags) $(CRYPTO_CFLAGS)
  CPPFLAGS += -DVERSION=\"$(VERSION)\"
  LDFLAGS ?= -g
  LIBS += $(shell libgcrypt-config --libs) $(CRYPTO_LDADD)
@@ -28,7 +33,7 @@ Index: vpnc-0.5.3r550/Makefile
  
  ifeq ($(shell uname -s), SunOS)
  LIBS += -lnsl -lresolv -lsocket
-@@ -82,7 +84,7 @@
+@@ -82,7 +84,7 @@ vpnc : $(OBJS) vpnc.o
  	$(CC) $(LDFLAGS) -o $@ $^ $(LIBS)
  
  vpnc.8 : vpnc.8.template makeman.pl vpnc
@@ -37,11 +42,11 @@ Index: vpnc-0.5.3r550/Makefile
  
  cisco-decrypt : cisco-decrypt.o decrypt-utils.o
  	$(CC) $(LDFLAGS) -o $@ $^ $(LIBS)
-Index: vpnc-0.5.3r550/makeman.pl
-===================================================================
---- vpnc-0.5.3r550.orig/makeman.pl
-+++ vpnc-0.5.3r550/makeman.pl
-@@ -21,7 +21,7 @@
+diff --git a/makeman.pl b/makeman.pl
+index cf241a1..62fb5af 100755
+--- a/makeman.pl
++++ b/makeman.pl
+@@ -21,7 +21,7 @@ use Fatal    qw(open close);
  use filetest qw(access);	# to always get errno-values on filetests
  use POSIX    qw(strftime setlocale LC_ALL);
  

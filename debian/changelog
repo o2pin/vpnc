@@ -1,16 +1,21 @@
 vpnc (0.5.3r550-3.1) unstable; urgency=medium
 
   * Non-maintainer upload.
+    + Clean-up upload, no substantive changes.
   * debian/control:
     + Bump Standards-Version to 4.4.0.
     - Drop unnecessary build-dependency dpkg-dev.
+  * debian/patches:
+    + Refresh patch series.
+    + Add patch 0008 to use canonical shebang for perl interpreter
+      in /usr/bin/pcf2vpnc.
 
   [ Ondřej Nový ]
   * d/copyright: Use https protocol in Format field
   * d/control: Deprecating priority extra as per policy 4.0.1
   * d/changelog: Remove trailing whitespaces
 
- -- Boyuan Yang <byang@debian.org>  Sun, 01 Sep 2019 13:54:02 -0400
+ -- Boyuan Yang <byang@debian.org>  Sun, 01 Sep 2019 14:02:02 -0400
 
 vpnc (0.5.3r550-3) unstable; urgency=medium
 
