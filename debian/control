@@ -2,7 +2,7 @@ Source: vpnc
 Section: net
 Priority: optional
 Maintainer: Florian Schlichting <fsfs@debian.org>
-Build-Depends: debhelper-compat (= 12),
+Build-Depends: debhelper-compat (= 13),
  libgcrypt20-dev,
  libgnutls28-dev,
  pkg-config,
