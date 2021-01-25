@@ -8,8 +8,8 @@ Subject: pcf2vpnc: Use canonical shebang for perl
 
 diff --git a/pcf2vpnc b/pcf2vpnc
 index 40da8a4..66db80d 100755
---- a/pcf2vpnc
-+++ b/pcf2vpnc
+--- a/src/pcf2vpnc
++++ b/src/pcf2vpnc
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env perl
 +#!/usr/bin/perl

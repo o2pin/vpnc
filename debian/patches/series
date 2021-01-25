@@ -1,8 +1,2 @@
-use-separate-vpnc-script.patch
-fix_makefile_VERSION.patch
-vpnc_typo.patch
-bug_799429.patch
 cross.patch
-dpd_big-endian.patch
-restore_original_cwd_after_vpnc_main_loop.patch
 0008-pcf2vpnc-Use-canonical-shebang-for-perl.patch
