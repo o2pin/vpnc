@@ -1,5 +1,6 @@
-vpnc (0.5.3r550-4) UNRELEASED; urgency=medium
+vpnc (0.5.3+git20210125-1) UNRELEASED; urgency=medium
 
+  [ Debian Janitor ]
   * Trim trailing whitespace.
   * Bump debhelper from old 9 to 12.
   * Set debhelper-compat version in Build-Depends.
@@ -7,7 +8,10 @@ vpnc (0.5.3r550-4) UNRELEASED; urgency=medium
   * Update standards version to 4.4.1, no changes needed.
   * Update standards version to 4.5.0, no changes needed.
 
- -- Debian Janitor <janitor@jelmer.uk>  Sun, 22 Dec 2019 14:26:33 +0000
+  [ Florian Schlichting ]
+  * Import new upstream version 0.5.3+git20210125 (closes: #935855, #954356)
+
+ -- Florian Schlichting <fsfs@debian.org>  Mon, 25 Jan 2021 19:16:43 +0800
 
 vpnc (0.5.3r550-3.1) unstable; urgency=medium
 
