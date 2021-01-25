@@ -1,4 +1,4 @@
-vpnc (0.5.3+git20210125-1) UNRELEASED; urgency=medium
+vpnc (0.5.3+git20210125-1) unstable; urgency=medium
 
   [ Debian Janitor ]
   * Trim trailing whitespace.
@@ -10,8 +10,19 @@ vpnc (0.5.3+git20210125-1) UNRELEASED; urgency=medium
 
   [ Florian Schlichting ]
   * Import new upstream version 0.5.3+git20210125 (closes: #935855, #954356)
+  * Drop obsolete conffile migrations
+  * Drop patches applied upstream and update cross.patch
+  * Add create-systemddir.patch so we can install the systemd unit
+  * Adjust Homepage and d/copyright for github upstream
+  * Install docs from github wiki submodule
+  * d/rules: inject Debian's paths package version
+  * Add spelling.patch fixing typos found by lintian
+  * Update upstream metadata, point to github
+  * Bump dh compat to level 13
+  * Declare compliance with Debian Policy 4.5.1
+  * Add Rules-Requires-Root: no
 
- -- Florian Schlichting <fsfs@debian.org>  Mon, 25 Jan 2021 19:16:43 +0800
+ -- Florian Schlichting <fsfs@debian.org>  Mon, 25 Jan 2021 22:05:23 +0800
 
 vpnc (0.5.3r550-3.1) unstable; urgency=medium
 
