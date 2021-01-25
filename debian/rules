@@ -1,5 +1,6 @@
 #!/usr/bin/make -f
 
+include /usr/share/dpkg/pkg-info.mk
 include /usr/share/dpkg/architecture.mk
 ifeq ($(origin CC),default)
 CC = $(DEB_HOST_GNU_TYPE)-gcc
@@ -9,28 +10,19 @@ export PKG_CONFIG=$(DEB_HOST_GNU_TYPE)-pkg-config
 ifneq ($(filter cross,$(DEB_BUILD_PROFILES)),)
 export VPNC = /usr/sbin/vpnc
 endif
-VERSION=$(shell dpkg-parsechangelog | sed -rne 's,^Version: ([^-]+).*,\1,p')
-SVN_REV=$(shell dpkg-parsechangelog | sed -rne 's,^Version: .*r([^-]+).*,\1,p')
-SVN_URL=http://svn.unix-ag.uni-kl.de/vpnc/trunk/
-ORIGDIR=vpnc-$(VERSION)
-TARNAME=vpnc_$(VERSION).orig.tar.gz
 
 export DEB_BUILD_MAINT_OPTIONS = hardening=+all
-
-get-orig-source:
-	rm -rf $(ORIGDIR)
-	git svn clone -r $(SVN_REV) $(SVN_URL) $(ORIGDIR)
-	rm -rf $(ORIGDIR)/.git
-	tar czf ../$(TARNAME) $(ORIGDIR)
-	rm -rf $(ORIGDIR)
 
 %:
 	dh $@
 
+override_dh_auto_build:
+	dh_auto_build -- SCRIPT_PATH=/usr/share/vpnc-scripts/vpnc-script VERSION=$(DEB_VERSION)
+
 override_dh_auto_install:
-	dh_auto_install -- PREFIX=/usr install
-	rm ./debian/vpnc/usr/share/doc/vpnc/COPYING
-	rm ./debian/vpnc/etc/vpnc/vpnc-script
+	touch install-doc
+	dh_auto_install -- PREFIX=/usr SYSTEMDDIR=/lib/systemd/system install
+	rm -rf ./debian/vpnc/usr/share/licenses
 
 override_dh_fixperms:
 	dh_fixperms
