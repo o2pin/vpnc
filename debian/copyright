@@ -1,7 +1,7 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Source: http://svn.unix-ag.uni-kl.de/vpnc/
+Source: https://github.com/streambinder/vpnc
 Upstream-Name: vpnc
-Upstream-Contact: vpnc-devel@unix-ag.uni-kl.de
+Upstream-Contact: Davide Pucci <posta@davidepucci.it>
 
 Files: *
 Copyright: 1999, Pierre Beyssac
@@ -22,9 +22,10 @@ Copyright: 1999, Pierre Beyssac
  2007, Paolo Zarpellon <paolo.zarpellon@gmail.com>
  2009-2014, Antonio Borneo <borneo.antonio@gmail.com>
  2009-2014, David Woodhouse <dwmw2@infradead.org>
+ 2017-2020, Davide Pucci <posta@davidepucci.it>
 License: GPL-2+
 
-Files: dh.* math_group.*
+Files: src/dh.* src/math_group.*
 Copyright: 1998, Niels Provos
  1999-2000 Niklas Hallqvist
 License: BSD-2-clause
@@ -33,7 +34,7 @@ Files: debian/*
 Copyright: 2003-2008, Eduard Bloch <blade@debian.org>
  2008-2010, Eric Warmenhoven <warmenhoven@debian.org>
  2010, Reinhard Tartler <siretart@tauware.de>
- 2011-2014, Florian Schlichting <fsfs@debian.org>
+ 2011-2021, Florian Schlichting <fsfs@debian.org>
 License: GPL-2+
 
 License: BSD-2-clause

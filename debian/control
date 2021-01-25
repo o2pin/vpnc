@@ -10,7 +10,7 @@ Build-Depends: debhelper-compat (= 12),
 Standards-Version: 4.5.0
 Vcs-Browser: https://salsa.debian.org/debian/vpnc
 Vcs-Git: https://salsa.debian.org/debian/vpnc.git
-Homepage: https://www.unix-ag.uni-kl.de/~massar/vpnc/
+Homepage: https://github.com/streambinder/vpnc
 
 Package: vpnc
 Architecture: any
