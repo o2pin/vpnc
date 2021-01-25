@@ -1,0 +1,34 @@
+Description: fix typos found by lintian
+Author: Florian Schlichting <fsfs@debian.org>
+
+--- a/src/config.c
++++ b/src/config.c
+@@ -579,7 +579,7 @@
+ 		" *  0: Do not print debug information.\n"
+ 		" *  1: Print minimal debug information.\n"
+ 		" *  2: Show statemachine and packet/payload type information.\n"
+-		" *  3: Dump everything exluding authentication data.\n"
++		" *  3: Dump everything excluding authentication data.\n"
+ 		" * 99: Dump everything INCLUDING AUTHENTICATION data (e.g. PASSWORDS).\n",
+ 		NULL
+ 	}, {
+--- a/src/vpnc.c
++++ b/src/vpnc.c
+@@ -1491,7 +1491,7 @@
+ 							break;
+ 						default:
+ 							DEBUG(1, printf
+-									  ("unknown attribute %d, arborting..\n",
++									  ("unknown attribute %d, aborting..\n",
+ 									  a->type));
+ 							reject = ISAKMP_N_ATTRIBUTES_NOT_SUPPORTED;
+ 							break;
+@@ -2998,7 +2998,7 @@
+ 	 */
+ 	if ((get_algo(SUPP_ALGO_HASH, SUPP_ALGO_IPSEC_SA, seen_auth, NULL, 0) == NULL) ||
+ 		(get_algo(SUPP_ALGO_CRYPT, SUPP_ALGO_IPSEC_SA, seen_enc, NULL, seen_keylen) == NULL)) {
+-		printf("\nFIXME: vpnc doesn't support change of algorightms during rekeying\n");
++		printf("\nFIXME: vpnc doesn't support change of algorithms during rekeying\n");
+ 		return ISAKMP_N_BAD_PROPOSAL_SYNTAX;
+ 	}
+ 
