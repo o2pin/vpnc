@@ -1,8 +1,12 @@
-vpnc (0.5.3+git20210125-2) UNRELEASED; urgency=medium
+vpnc (0.5.3+git20220503-1) UNRELEASED; urgency=medium
 
+  [ Debian Janitor ]
   * Set upstream metadata fields: Bug-Submit, Repository, Repository-Browse.
 
- -- Debian Janitor <janitor@jelmer.uk>  Fri, 24 Sep 2021 04:56:05 -0000
+  [ Florian Schlichting ]
+  * Import new upstream version 0.5.3+git20220503 (closes: #1011047)
+
+ -- Florian Schlichting <fsfs@debian.org>  Mon, 16 May 2022 21:41:14 +0800
 
 vpnc (0.5.3+git20210125-1) unstable; urgency=medium
 
