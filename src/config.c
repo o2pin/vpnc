@@ -516,14 +516,14 @@ static const struct config_names_s {
 		CONFIG_IKE_DH, 1, 0, 1,
 		"--dh",
 		"IKE DH Group",
-		"<dh1/dh2/dh5>",
+		"<dh1/dh2/dh5/dh14/dh15/dh16/dh17/dh18>",
 		"name of the IKE DH Group",
 		config_def_ike_dh
 	}, {
 		CONFIG_IPSEC_PFS, 1, 0, 1,
 		"--pfs",
 		"Perfect Forward Secrecy",
-		"<nopfs/dh1/dh2/dh5/server>",
+		"<nopfs/dh1/dh2/dh5/dh14/dh15/dh16/dh17/dh18/server>",
 		"Diffie-Hellman group to use for PFS",
 		config_def_pfs
 	}, {
@@ -579,7 +579,7 @@ static const struct config_names_s {
 		" *  0: Do not print debug information.\n"
 		" *  1: Print minimal debug information.\n"
 		" *  2: Show statemachine and packet/payload type information.\n"
-		" *  3: Dump everything exluding authentication data.\n"
+		" *  3: Dump everything excluding authentication data.\n"
 		" * 99: Dump everything INCLUDING AUTHENTICATION data (e.g. PASSWORDS).\n",
 		NULL
 	}, {
