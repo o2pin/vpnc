@@ -1,12 +1,17 @@
-vpnc (0.5.3+git20220503-1) UNRELEASED; urgency=medium
+vpnc (0.5.3+git20220503-1) unstable; urgency=medium
 
   [ Debian Janitor ]
   * Set upstream metadata fields: Bug-Submit, Repository, Repository-Browse.
 
   [ Florian Schlichting ]
   * Import new upstream version 0.5.3+git20220503 (closes: #1011047)
+  * Update d/watch: point to streambinder repo, use mode=git
+  * Update copyright years
+  * Declare compliance with Debian Policy 4.6.1
+  * Drop patches applied upstream
+  * Add d/README.source about creating the upstream tarball
 
- -- Florian Schlichting <fsfs@debian.org>  Mon, 16 May 2022 21:41:14 +0800
+ -- Florian Schlichting <fsfs@debian.org>  Mon, 16 May 2022 22:21:20 +0800
 
 vpnc (0.5.3+git20210125-1) unstable; urgency=medium
 
