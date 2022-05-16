@@ -1,0 +1,12 @@
+How to create a source tarball
+------------------------------
+
+The upstream repo contains a submodule, which needs to be set up before
+the tarball can be created:
+
+git clone https://github.com/streambinder/vpnc.git
+git submodule init
+git submodule update
+cd src/doc && git co master && cd -
+GITVERSION=`git log --format='git%cd' --date=format:%Y%m%d -1`
+tar czf ../vpnc_0.5.3+$GITVERSION.orig.tar.gz --exclude-vcs --exclude=.github .
