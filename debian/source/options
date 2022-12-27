@@ -1,0 +1,2 @@
+# ignore files in .github, not included in tarball
+extend-diff-ignore = "^\.github"
