@@ -20,8 +20,7 @@
 #
 # $Id$
 
-DESTDIR=
-PREFIX=/usr/local
+PREFIX?=/usr/local
 ETCDIR=/etc/vpnc
 BINDIR=$(PREFIX)/bin
 SBINDIR=$(PREFIX)/sbin
@@ -45,11 +44,15 @@ SYSTEMDDIR=$(PREFIX)/lib/systemd/system
 #OPENSSL_GPL_VIOLATION=yes
 
 PKG_CONFIG ?= pkg-config
+LIBGCRYPT_CONFIG ?= libgcrypt-config
+LIBGCRYPT_LDADD = $(shell $(PKG_CONFIG) --libs libgcrypt || $(LIBGCRYPT_CONFIG) --libs)
+LIBGCRYPT_CFLAGS = $(shell $(PKG_CONFIG) --cflags libgcrypt || $(LIBGCRYPT_CONFIG) --cflags)
+
+ifneq ($(OPENSSL_GPL_VIOLATION), yes)
 CRYPTO_LDADD = $(shell $(PKG_CONFIG) --libs gnutls)
 CRYPTO_CFLAGS = $(shell $(PKG_CONFIG) --cflags gnutls) -DCRYPTO_GNUTLS
 CRYPTO_SRCS = src/crypto-gnutls.c
-
-ifeq ($(OPENSSL_GPL_VIOLATION), yes)
+else
 CRYPTO_LDADD = -lcrypto
 CRYPTO_CFLAGS = -DOPENSSL_GPL_VIOLATION -DCRYPTO_OPENSSL
 CRYPTO_SRCS = src/crypto-openssl.c
@@ -73,10 +76,10 @@ export VERSION
 CC ?= gcc
 CFLAGS ?= -O3 -g
 CFLAGS += -W -Wall -Wmissing-declarations -Wwrite-strings
-CFLAGS +=  $(shell $(PKG_CONFIG) --cflags libgcrypt) $(CRYPTO_CFLAGS)
+CFLAGS += $(LIBGCRYPT_CFLAGS) $(CRYPTO_CFLAGS)
 CPPFLAGS += -DVERSION=\"$(VERSION)\" -DSCRIPT_PATH=\"$(SCRIPT_PATH)\"
 LDFLAGS ?= -g
-LIBS += $(shell $(PKG_CONFIG) --libs libgcrypt) $(CRYPTO_LDADD)
+LIBS += $(LIBGCRYPT_LDADD) $(CRYPTO_LDADD)
 VPNC ?= $(BUILDDIR)/vpnc
 
 ifeq ($(shell uname -s), SunOS)
@@ -132,7 +135,7 @@ distclean: clean
 	-rm -f src/vpnc-debug.c src/vpnc-debug.h src/vpnc.ps src/vpnc.8 src/.depend
 
 install-common: all
-	install -d $(DESTDIR)$(ETCDIR) $(DESTDIR)$(BINDIR) $(DESTDIR)$(SBINDIR) $(DESTDIR)$(MANDIR)/man1 $(DESTDIR)$(MANDIR)/man8 $(DESTDIR)$(DOCDIR) $(DESTDIR)$(SYSTEMDDIR) $(DESTDIR)$(LICENSEDIR)
+	install -d $(DESTDIR)$(ETCDIR) $(DESTDIR)$(BINDIR) $(DESTDIR)$(SBINDIR) $(DESTDIR)$(MANDIR)/man1 $(DESTDIR)$(MANDIR)/man8 $(DESTDIR)$(SYSTEMDDIR) $(DESTDIR)$(LICENSEDIR)
 	install -m600 src/vpnc.conf $(DESTDIR)$(ETCDIR)/default.conf
 	install -m755 src/vpnc-disconnect $(DESTDIR)$(SBINDIR)
 	install -m755 src/pcf2vpnc $(DESTDIR)$(BINDIR)
@@ -146,6 +149,7 @@ src/doc:
 	git submodule update --init src/doc
 
 install-doc: src/doc
+	install -d $(DESTDIR)$(DOCDIR)
 	install -m644 src/doc/*.md $(DESTDIR)$(DOCDIR)
 	rm -f $(DESTDIR)$(DOCDIR)/Home.md
 
