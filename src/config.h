@@ -18,8 +18,8 @@
    $Id$
  */
 
-#ifndef __CONFIG_H__
-#define __CONFIG_H__
+#ifndef VPNC_CONFIG_H
+#define VPNC_CONFIG_H
 
 #include <unistd.h>
 #include <inttypes.h>
@@ -30,8 +30,9 @@ enum config_enum {
 	CONFIG_SCRIPT,
 	CONFIG_DEBUG,
 	CONFIG_DOMAIN,
-	CONFIG_ENABLE_1DES,
+	CONFIG_ENABLE_WEAK_ENCRYPTION,
 	CONFIG_ENABLE_NO_ENCRYPTION,
+	CONFIG_ENABLE_WEAK_AUTHENTICATION,
 	CONFIG_ND,
 	CONFIG_NON_INTERACTIVE,
 	CONFIG_PID_FILE,
@@ -100,27 +101,25 @@ extern const char *config[LAST_CONFIG];
 extern enum vendor_enum opt_vendor;
 extern int opt_debug;
 extern int opt_nd;
-extern int opt_1des, opt_no_encryption, opt_auth_mode;
+extern int opt_weak_encryption, opt_no_encryption, opt_weak_authentication, opt_auth_mode;
 extern enum natt_mode_enum opt_natt_mode;
 extern enum if_mode_enum opt_if_mode;
 extern uint16_t opt_udpencapport;
 
-#define TIMESTAMP() ({              \
-		char st[20];                \
-		time_t t;               \
-		struct tm *tm;              \
-		t = time(NULL);             \
-		tm = localtime(&t);         \
-		strftime(st, sizeof(st), "%F %T", tm);  \
-		st;                 \
-	})
-
-#define DEBUGTOP(LVL, COMMAND) do {         \
-		if (opt_debug >= (LVL)) {       \
-			printf("\n");           \
-			COMMAND;            \
-			printf(" [%s]\n", TIMESTAMP()); \
-		}                   \
+#define DEBUGTOP(LVL, COMMAND) do {                            \
+		if (opt_debug >= (LVL)) {                      \
+			printf("\n");                          \
+			                                       \
+			COMMAND;                               \
+			                                       \
+			char st[20];                           \
+			time_t t;                              \
+			struct tm *tm;                         \
+			t = time(NULL);                        \
+			tm = localtime(&t);                    \
+			strftime(st, sizeof(st), "%F %T", tm); \
+			printf(" [%s]\n", st);                 \
+		}                                              \
 } while (0)
 
 #define DEBUG(LVL, COMMAND) do {        \
@@ -138,4 +137,4 @@ extern char *vpnc_getpass(const char *prompt);
 extern void logmsg(int priority, const char *format, ...)
 __attribute__ ((__format__ (__printf__, 2, 3)));
 
-#endif
+#endif /* VPNC_CONFIG_H */
