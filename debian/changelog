@@ -1,12 +1,16 @@
-vpnc (0.5.3+git20220927-1) UNRELEASED; urgency=medium
+vpnc (0.5.3+git20220927-1) unstable; urgency=medium
 
   [ Debian Janitor ]
   * Update lintian override info to new format on line 2.
 
   [ Florian Schlichting ]
   * Import new upstream version 0.5.3+git20220927
+  * Add d/source/options to ignore .github/ that is skipped when generating
+    the tarball
+  * Update the other lintian override to new format
+  * Declare compliance with Debian Policy 4.6.2
 
- -- Florian Schlichting <fsfs@debian.org>  Tue, 27 Dec 2022 19:39:44 +0100
+ -- Florian Schlichting <fsfs@debian.org>  Tue, 27 Dec 2022 20:24:45 +0100
 
 vpnc (0.5.3+git20220503-1) unstable; urgency=medium
 
