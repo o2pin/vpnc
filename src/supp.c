@@ -28,17 +28,17 @@
 #include <stdlib.h>
 
 const supported_algo_t supp_dh_group[] = {
-	{"nopfs", 0, 0, 0, 0},
-	{"dh1", OAKLEY_GRP_1, IKE_GROUP_MODP_768,  IKE_GROUP_MODP_768,  0},
-	{"dh2", OAKLEY_GRP_2, IKE_GROUP_MODP_1024, IKE_GROUP_MODP_1024, 0},
+	// {"nopfs", 0, 0, 0, 0},
+	// {"dh1", OAKLEY_GRP_1, IKE_GROUP_MODP_768,  IKE_GROUP_MODP_768,  0},
+	// {"dh2", OAKLEY_GRP_2, IKE_GROUP_MODP_1024, IKE_GROUP_MODP_1024, 0},
 	{"dh5", OAKLEY_GRP_5, IKE_GROUP_MODP_1536, IKE_GROUP_MODP_1536, 0},
-	{"dh14", OAKLEY_GRP_14, IKE_GROUP_MODP_2048, IKE_GROUP_MODP_2048, 0},
-	{"dh15", OAKLEY_GRP_15, IKE_GROUP_MODP_3072, IKE_GROUP_MODP_3072, 0},
-	{"dh16", OAKLEY_GRP_16, IKE_GROUP_MODP_4096, IKE_GROUP_MODP_4096, 0},
-	{"dh17", OAKLEY_GRP_17, IKE_GROUP_MODP_6144, IKE_GROUP_MODP_6144, 0},
-	{"dh18", OAKLEY_GRP_18, IKE_GROUP_MODP_8192, IKE_GROUP_MODP_8192, 0},
+	// {"dh14", OAKLEY_GRP_14, IKE_GROUP_MODP_2048, IKE_GROUP_MODP_2048, 0},
+	// {"dh15", OAKLEY_GRP_15, IKE_GROUP_MODP_3072, IKE_GROUP_MODP_3072, 0},
+	// {"dh16", OAKLEY_GRP_16, IKE_GROUP_MODP_4096, IKE_GROUP_MODP_4096, 0},
+	// {"dh17", OAKLEY_GRP_17, IKE_GROUP_MODP_6144, IKE_GROUP_MODP_6144, 0},
+	// {"dh18", OAKLEY_GRP_18, IKE_GROUP_MODP_8192, IKE_GROUP_MODP_8192, 0},
 	/*{ "dh7", OAKLEY_GRP_7, IKE_GROUP_EC2N_163K, IKE_GROUP_EC2N_163K, 0 } note: code missing */
-	{NULL, 0, 0, 0, 0}
+	// {NULL, 0, 0, 0, 0}
 };
 
 const supported_algo_t supp_hash[] = {
@@ -59,13 +59,13 @@ const supported_algo_t supp_crypt[] = {
 
 const supported_algo_t supp_auth[] = {
 	{"psk", 0, IKE_AUTH_PRESHARED, 0, 0},
-	{"psk+xauth", 0, IKE_AUTH_XAUTHInitPreShared, 0, 0},
+	// {"psk+xauth", 0, IKE_AUTH_XAUTHInitPreShared, 0, 0},
 #if 0
 	{"cert(dsa)", 0, IKE_AUTH_RSA_SIG, 0, 0},
 	{"cert(rsasig)", 0, IKE_AUTH_DSS, 0, 0},
 	{"hybrid(dsa)", 0, IKE_AUTH_DSS, 0, 0},
 #endif /* 0 */
-	{"hybrid(rsa)", 0, IKE_AUTH_HybridInitRSA, 0, 0},
+	// {"hybrid(rsa)", 0, IKE_AUTH_HybridInitRSA, 0, 0},
 	{NULL, 0, 0, 0, 0}
 };
 
@@ -78,6 +78,7 @@ const supported_algo_t *get_algo(enum algo_group what, enum supp_algo_key key, i
 
 	switch (what) {
 	case SUPP_ALGO_DH_GROUP:
+		printf("	into SUPP_ALGO_DH_GROUP case\n ");
 		sa = supp_dh_group;
 		break;
 	case SUPP_ALGO_HASH:
@@ -92,8 +93,9 @@ const supported_algo_t *get_algo(enum algo_group what, enum supp_algo_key key, i
 	default:
 		abort();
 	}
-
 	for (i = 0; sa[i].name != NULL; i++) {
+		// printf("sa[i] is %x\n",sa[i]);
+		// printf("key is %x\n",key);
 		switch (key) {
 		case SUPP_ALGO_NAME:
 			valname = sa[i].name;

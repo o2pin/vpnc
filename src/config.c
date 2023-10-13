@@ -326,7 +326,8 @@ static void config_deobfuscate(int obfuscated, int clear)
 
 static const char *config_def_ike_dh(void)
 {
-	return "dh2";
+	// return "dh2";
+	return "dh5";
 }
 
 static const char *config_def_pfs(void)
@@ -1033,14 +1034,14 @@ void do_config(int argc, char **argv)
 			asprintf(&prompt, "Enter IPSec secret for %s@%s: ",
 					 config[CONFIG_IPSEC_ID], config[CONFIG_IPSEC_GATEWAY]);
 			break;
-		case CONFIG_XAUTH_USERNAME:
-			printf("Enter username for %s: ", config[CONFIG_IPSEC_GATEWAY]);
-			break;
-		case CONFIG_XAUTH_PASSWORD:
-			asprintf(&prompt, "Enter password for %s@%s: ",
-					 config[CONFIG_XAUTH_USERNAME],
-					 config[CONFIG_IPSEC_GATEWAY]);
-			break;
+		// case CONFIG_XAUTH_USERNAME:
+		// 	printf("Enter username for %s: ", config[CONFIG_IPSEC_GATEWAY]);
+		// 	break;
+		// case CONFIG_XAUTH_PASSWORD:
+		// 	asprintf(&prompt, "Enter password for %s@%s: ",
+		// 			 config[CONFIG_XAUTH_USERNAME],
+		// 			 config[CONFIG_IPSEC_GATEWAY]);
+		// 	break;
 		default:
 			continue;
 		}
@@ -1090,15 +1091,15 @@ void do_config(int argc, char **argv)
 		error(1, 0, "missing IPSec ID");
 	if (!config[CONFIG_IPSEC_SECRET])
 		error(1, 0, "missing IPSec secret");
-	if (!config[CONFIG_XAUTH_USERNAME])
-		error(1, 0, "missing Xauth username");
-	if (!config[CONFIG_XAUTH_PASSWORD] && !config[CONFIG_XAUTH_INTERACTIVE])
-		error(1, 0, "missing Xauth password");
+	// if (!config[CONFIG_XAUTH_USERNAME])
+	// 	error(1, 0, "missing Xauth username");
+	// if (!config[CONFIG_XAUTH_PASSWORD] && !config[CONFIG_XAUTH_INTERACTIVE])
+	// 	error(1, 0, "missing Xauth password");
 	if (get_dh_group_ike() == NULL)
 		error(1, 0, "IKE DH Group \"%s\" unsupported\n", config[CONFIG_IKE_DH]);
-	if (get_dh_group_ipsec(-1) == NULL)
-		error(1, 0, "Perfect Forward Secrecy \"%s\" unsupported\n",
-			  config[CONFIG_IPSEC_PFS]);
+	// if (get_dh_group_ipsec(-1) == NULL)
+	// 	error(1, 0, "Perfect Forward Secrecy \"%s\" unsupported\n",
+	// 		  config[CONFIG_IPSEC_PFS]);
 	if (get_dh_group_ike()->ike_sa_id == 0)
 		error(1, 0, "IKE DH Group must not be nopfs\n");
 

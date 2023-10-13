@@ -75,7 +75,7 @@ export VERSION
 
 CC ?= gcc
 CFLAGS ?= -O3 -g
-CFLAGS += -W -Wall -Wmissing-declarations -Wwrite-strings
+CFLAGS += -w -Wall -Wmissing-declarations -Wwrite-strings
 CFLAGS += $(LIBGCRYPT_CFLAGS) $(CRYPTO_CFLAGS)
 CPPFLAGS += -DVERSION=\"$(VERSION)\" -DSCRIPT_PATH=\"$(SCRIPT_PATH)\"
 LDFLAGS ?= -g

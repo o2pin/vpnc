@@ -57,9 +57,9 @@ GCRY_THREAD_OPTION_PTHREAD_IMPL;
 #define ISAKMP_PORT (500)
 #define ISAKMP_PORT_NATT (4500)
 
-const unsigned char VID_XAUTH[] = { /* "draft-ietf-ipsra-isakmp-xauth-06.txt"/8 */
-	0x09, 0x00, 0x26, 0x89, 0xDF, 0xD6, 0xB7, 0x12
-};
+// const unsigned char VID_XAUTH[] = { /* "draft-ietf-ipsra-isakmp-xauth-06.txt"/8 */
+// 	0x09, 0x00, 0x26, 0x89, 0xDF, 0xD6, 0xB7, 0x12
+// };
 const unsigned char VID_DPD[] = { /* Dead Peer Detection, RFC 3706 */
 	0xAF, 0xCA, 0xD7, 0x13, 0x68, 0xA1, 0xF1, 0xC9,
 	0x6B, 0x86, 0x96, 0xFC, 0x77, 0x57, 0x01, 0x00
@@ -138,7 +138,7 @@ struct vid_element {
 };
 
 const struct vid_element vid_list[] = {
-	{ VID_XAUTH,        sizeof(VID_XAUTH),  "Xauth" },
+	// { VID_XAUTH,        sizeof(VID_XAUTH),  "Xauth" },
 	{ VID_DPD,      sizeof(VID_DPD),    "DPD" },
 	{ VID_UNITY,        sizeof(VID_UNITY),  "Cisco Unity" },
 	{ VID_NATT_00,      sizeof(VID_NATT_00),    "Nat-T 00" },
@@ -1143,7 +1143,8 @@ static struct isakmp_attribute *make_transform_ike(int dh_group, int crypt, int 
 	a->af = isakmp_attr_lots;
 	a->u.lots.length = 4;
 	a->u.lots.data = xallocc(a->u.lots.length);
-	*((uint32_t *) a->u.lots.data) = htonl(2147483);
+	// *((uint32_t *) a->u.lots.data) = htonl(2147483);
+	*((uint32_t *) a->u.lots.data) = htonl(86400);
 	a = new_isakmp_attribute_16(IKE_ATTRIB_LIFE_TYPE, IKE_LIFE_TYPE_SECONDS, a);
 	a = new_isakmp_attribute_16(IKE_ATTRIB_AUTH_METHOD, auth, a);
 	a = new_isakmp_attribute_16(IKE_ATTRIB_GROUP_DESC, dh_group, a);
@@ -1168,29 +1169,34 @@ static struct isakmp_payload *make_our_sa_ike(void)
 	r->u.sa.proposals = new_isakmp_payload(ISAKMP_PAYLOAD_P);
 	r->u.sa.proposals->u.p.prot_id = ISAKMP_IPSEC_PROTO_ISAKMP;
 	for (auth = 0; supp_auth[auth].name != NULL; auth++) {
-		if (opt_auth_mode == AUTH_MODE_CERT) {
-			if ((supp_auth[auth].ike_sa_id != IKE_AUTH_RSA_SIG) &&
-				(supp_auth[auth].ike_sa_id != IKE_AUTH_DSS))
-				continue;
-		} else if (opt_auth_mode == AUTH_MODE_HYBRID) {
-			if ((supp_auth[auth].ike_sa_id != IKE_AUTH_HybridInitRSA) &&
-				(supp_auth[auth].ike_sa_id != IKE_AUTH_HybridInitDSS))
-				continue;
-		} else {
-			if (supp_auth[auth].ike_sa_id == IKE_AUTH_HybridInitRSA ||
-				supp_auth[auth].ike_sa_id == IKE_AUTH_HybridInitDSS ||
-				supp_auth[auth].ike_sa_id == IKE_AUTH_RSA_SIG ||
-				supp_auth[auth].ike_sa_id == IKE_AUTH_DSS)
-				continue;
-		}
+		// if (opt_auth_mode == AUTH_MODE_CERT) {
+		// 	if ((supp_auth[auth].ike_sa_id != IKE_AUTH_RSA_SIG) &&
+		// 		(supp_auth[auth].ike_sa_id != IKE_AUTH_DSS))
+		// 		continue;
+		// } else if (opt_auth_mode == AUTH_MODE_HYBRID) {
+		// 	if ((supp_auth[auth].ike_sa_id != IKE_AUTH_HybridInitRSA) &&
+		// 		(supp_auth[auth].ike_sa_id != IKE_AUTH_HybridInitDSS))
+		// 		continue;
+		// } else {
+		// 	if (supp_auth[auth].ike_sa_id == IKE_AUTH_HybridInitRSA ||
+		// 		supp_auth[auth].ike_sa_id == IKE_AUTH_HybridInitDSS ||
+		// 		supp_auth[auth].ike_sa_id == IKE_AUTH_RSA_SIG ||
+		// 		supp_auth[auth].ike_sa_id == IKE_AUTH_DSS)
+		// 		continue;
+		// }
 		for (crypt = 0; supp_crypt[crypt].name != NULL; crypt++) {
 			keylen = supp_crypt[crypt].keylen;
 			for (hash = 0; supp_hash[hash].name != NULL; hash++) {
 				tn = t;
 				t = new_isakmp_payload(ISAKMP_PAYLOAD_T);
 				t->u.t.id = ISAKMP_IPSEC_KEY_IKE;
+				// 开始生成第一个包中sa的proposal的transform，可以生成多个transform
+				// dh_grp 的是sa提案中transform的group_dsc的value，为5时代表 IKE_GROUP_MODP_1536 ，原本为2代表 IKE_GROUP_MODP_1024
+				// supp_auth[auth].ike_sa_id 的值为1代表presharekey认证，原本为 65001 代表xauth认证
 				a = make_transform_ike(dh_grp, supp_crypt[crypt].ike_sa_id,
 									   supp_hash[hash].ike_sa_id, keylen, supp_auth[auth].ike_sa_id);
+				// a = make_transform_ike(5, supp_crypt[crypt].ike_sa_id,
+				// 					   supp_hash[hash].ike_sa_id, keylen, 1);
 				t->u.t.attributes = a;
 				t->next = tn;
 			}
@@ -1304,6 +1310,7 @@ static void do_phase1_am_init(struct sa_block *s)
 static void do_phase1_am_packet1(struct sa_block *s, const char *key_id)
 {
 	DEBUGTOP(2, printf("S4.3 AM packet_1\n"));
+	printf("S4.3 AM packet_1\n");
 	/* Create the first packet.  */
 	{
 		struct isakmp_packet *p1;
@@ -1315,6 +1322,7 @@ static void do_phase1_am_packet1(struct sa_block *s, const char *key_id)
 		memcpy(p1->i_cookie, s->ike.i_cookie, ISAKMP_COOKIE_LENGTH);
 		p1->isakmp_version = ISAKMP_VERSION;
 		p1->exchange_type = ISAKMP_EXCHANGE_AGGRESSIVE;
+		// 生成野蛮模式第一个包的sa
 		p1->payload = l = make_our_sa_ike();
 		flatten_isakmp_payload(l, &s->ike.sa_f, &s->ike.sa_size);
 		l->next = new_isakmp_data_payload(ISAKMP_PAYLOAD_KE, s->ike.dh_public, dh_getlen(s->ike.dh_grp));
@@ -1333,8 +1341,8 @@ static void do_phase1_am_packet1(struct sa_block *s, const char *key_id)
 		l->u.id.data = xallocc(l->u.id.length);
 		memcpy(l->u.id.data, key_id, strlen(key_id));
 		flatten_isakmp_payload(l, &s->ike.idi_f, &s->ike.idi_size);
-		l = l->next = new_isakmp_data_payload(ISAKMP_PAYLOAD_VID,
-											  VID_XAUTH, sizeof(VID_XAUTH));
+		// l = l->next = new_isakmp_data_payload(ISAKMP_PAYLOAD_VID,
+		// 									  VID_XAUTH, sizeof(VID_XAUTH));
 		l = l->next = new_isakmp_data_payload(ISAKMP_PAYLOAD_VID,
 											  VID_UNITY, sizeof(VID_UNITY));
 		if ((opt_natt_mode == NATT_NORMAL) || (opt_natt_mode == NATT_FORCE)) {
@@ -1366,12 +1374,14 @@ static void do_phase1_am_packet1(struct sa_block *s, const char *key_id)
 		/* Now, send that packet and receive a new one.  */
 		r_length = sendrecv(s, r_packet, sizeof(r_packet), pkt, pkt_len, 0);
 		free(pkt);
+		printf("	Success send the packet 1 .\n");
 	}
 }
 
 static void do_phase1_am_packet2(struct sa_block *s, const char *shared_key)
 {
 	DEBUGTOP(2, printf("S4.4 AM_packet2\n"));
+	printf("S4.4 AM_packet2 | Decode the recieved packet.\n");
 	/* Decode the recieved packet.  */
 	{
 		int reject, ret;
@@ -1531,17 +1541,17 @@ static void do_phase1_am_packet2(struct sa_block *s, const char *shared_key)
 												 NULL, 0)->name));
 						switch (s->ike.cry_algo) {
 						case GCRY_CIPHER_DES:
-						case GCRY_CIPHER_3DES:
-							if (!opt_weak_encryption) {
-								const char *name_enc = get_algo(SUPP_ALGO_CRYPT, SUPP_ALGO_IKE_SA,
-																seen_enc, NULL, seen_keylen)->name;
-								error(1, 0, "Peer has selected %s as encrytion method.\n"
-									  "This algorithm is considered too weak today.\n"
-									  "If your vpn concentrator admin still insists on using %s,\n"
-									  "use the \"--enable-weak-encryption\" option.\n",
-									  name_enc, name_enc);
-							}
-							break;
+						// case GCRY_CIPHER_3DES:
+						// 	if (!opt_weak_encryption) {
+						// 		const char *name_enc = get_algo(SUPP_ALGO_CRYPT, SUPP_ALGO_IKE_SA,
+						// 										seen_enc, NULL, seen_keylen)->name;
+						// 		error(1, 0, "Peer has selected %s as encrytion method.\n"
+						// 			  "This algorithm is considered too weak today.\n"
+						// 			  "If your vpn concentrator admin still insists on using %s,\n"
+						// 			  "use the \"--enable-weak-encryption\" option.\n",
+						// 			  name_enc, name_enc);
+						// 	}
+						// 	break;
 						default:
 							break;
 						}
@@ -1592,11 +1602,12 @@ static void do_phase1_am_packet2(struct sa_block *s, const char *shared_key)
 				sig = rp;
 				break;
 			case ISAKMP_PAYLOAD_VID:
-				if (rp->u.vid.length == sizeof(VID_XAUTH)
-					&& memcmp(rp->u.vid.data, VID_XAUTH,
-							  sizeof(VID_XAUTH)) == 0) {
-					DEBUG(2, printf("peer is XAUTH capable (draft-ietf-ipsec-isakmp-xauth-06)\n"));
-				} else if (rp->u.vid.length == sizeof(VID_NATT_RFC)
+				// if (rp->u.vid.length == sizeof(VID_XAUTH)
+				// 	&& memcmp(rp->u.vid.data, VID_XAUTH,
+				// 			  sizeof(VID_XAUTH)) == 0) {
+				// 	DEBUG(2, printf("peer is XAUTH capable (draft-ietf-ipsec-isakmp-xauth-06)\n"));
+				// } else if (rp->u.vid.length == sizeof(VID_NATT_RFC)
+				if (rp->u.vid.length == sizeof(VID_NATT_RFC)
 						   && memcmp(rp->u.vid.data, VID_NATT_RFC,
 									 sizeof(VID_NATT_RFC)) == 0) {
 					if (natt_draft < 1) natt_draft = 2;
@@ -1748,35 +1759,36 @@ static void do_phase1_am_packet2(struct sa_block *s, const char *shared_key)
 			DEBUG(99, printf("shared-key: %s\n",shared_key));
 
 			/* SKEYID - psk only */
-			if (s->ike.auth_algo == IKE_AUTH_PRESHARED ||
-				s->ike.auth_algo == IKE_AUTH_XAUTHInitPreShared ||
-				s->ike.auth_algo == IKE_AUTH_XAUTHRespPreShared) {
+			// if (s->ike.auth_algo == IKE_AUTH_PRESHARED ||
+			// 	s->ike.auth_algo == IKE_AUTH_XAUTHInitPreShared ||
+			// 	s->ike.auth_algo == IKE_AUTH_XAUTHRespPreShared) {
+			if (s->ike.auth_algo == IKE_AUTH_PRESHARED) {
 				gcry_md_open(&skeyid_ctx, s->ike.md_algo, GCRY_MD_FLAG_HMAC);
 				gcry_md_setkey(skeyid_ctx, shared_key, strlen(shared_key));
 				gcry_md_write(skeyid_ctx, s->ike.i_nonce, sizeof(s->ike.i_nonce));
 				gcry_md_write(skeyid_ctx, nonce->u.nonce.data, nonce->u.nonce.length);
 				gcry_md_final(skeyid_ctx);
-			} else if (s->ike.auth_algo == IKE_AUTH_DSS ||
-					   s->ike.auth_algo == IKE_AUTH_RSA_SIG ||
-					   s->ike.auth_algo == IKE_AUTH_ECDSA_SIG ||
-					   s->ike.auth_algo == IKE_AUTH_HybridInitRSA ||
-					   s->ike.auth_algo == IKE_AUTH_HybridRespRSA ||
-					   s->ike.auth_algo == IKE_AUTH_HybridInitDSS ||
-					   s->ike.auth_algo == IKE_AUTH_HybridRespDSS ||
-					   s->ike.auth_algo == IKE_AUTH_XAUTHInitDSS ||
-					   s->ike.auth_algo == IKE_AUTH_XAUTHRespDSS ||
-					   s->ike.auth_algo == IKE_AUTH_XAUTHInitRSA ||
-					   s->ike.auth_algo == IKE_AUTH_XAUTHRespRSA) {
-				unsigned char *key;
-				int key_len;
-				key_len = sizeof(s->ike.i_nonce) + nonce->u.nonce.length;
-				key = xallocc(key_len);
-				memcpy(key, s->ike.i_nonce, sizeof(s->ike.i_nonce));
-				memcpy(key + sizeof(s->ike.i_nonce), nonce->u.nonce.data, nonce->u.nonce.length);
-				gcry_md_open(&skeyid_ctx, s->ike.md_algo, GCRY_MD_FLAG_HMAC);
-				gcry_md_setkey(skeyid_ctx, key, key_len);
-				gcry_md_write(skeyid_ctx, dh_shared_secret, dh_getlen(s->ike.dh_grp));
-				gcry_md_final(skeyid_ctx);
+			// } else if (s->ike.auth_algo == IKE_AUTH_DSS ||
+			// 		   s->ike.auth_algo == IKE_AUTH_RSA_SIG ||
+			// 		   s->ike.auth_algo == IKE_AUTH_ECDSA_SIG ||
+			// 		   s->ike.auth_algo == IKE_AUTH_HybridInitRSA ||
+			// 		   s->ike.auth_algo == IKE_AUTH_HybridRespRSA ||
+			// 		   s->ike.auth_algo == IKE_AUTH_HybridInitDSS ||
+			// 		   s->ike.auth_algo == IKE_AUTH_HybridRespDSS ) {
+			// 		//    s->ike.auth_algo == IKE_AUTH_XAUTHInitDSS ||
+			// 		//    s->ike.auth_algo == IKE_AUTH_XAUTHRespDSS ||
+			// 		//    s->ike.auth_algo == IKE_AUTH_XAUTHInitRSA ||
+			// 		//    s->ike.auth_algo == IKE_AUTH_XAUTHRespRSA) {
+			// 	unsigned char *key;
+			// 	int key_len;
+			// 	key_len = sizeof(s->ike.i_nonce) + nonce->u.nonce.length;
+			// 	key = xallocc(key_len);
+			// 	memcpy(key, s->ike.i_nonce, sizeof(s->ike.i_nonce));
+			// 	memcpy(key + sizeof(s->ike.i_nonce), nonce->u.nonce.data, nonce->u.nonce.length);
+			// 	gcry_md_open(&skeyid_ctx, s->ike.md_algo, GCRY_MD_FLAG_HMAC);
+			// 	gcry_md_setkey(skeyid_ctx, key, key_len);
+			// 	gcry_md_write(skeyid_ctx, dh_shared_secret, dh_getlen(s->ike.dh_grp));
+			// 	gcry_md_final(skeyid_ctx);
 			} else
 				error(1, 0, "SKEYID could not be computed: %s", "the selected authentication method is not supported");
 			skeyid = gcry_md_read(skeyid_ctx, 0);
@@ -1804,6 +1816,9 @@ static void do_phase1_am_packet2(struct sa_block *s, const char *shared_key)
 			gcry_md_final(hm);
 			expected_hash = gcry_md_read(hm, 0);
 			hex_dump("expected hash", expected_hash, s->ike.md_len, NULL);
+			printf("expected hash len is %#zu %zu %d \n", s->ike.md_len,s->ike.md_len,s->ike.md_len);
+			hex_dump("md_len hex value", &s->ike.md_len, sizeof(s->ike.md_len), NULL);
+
 
 			if (opt_auth_mode == AUTH_MODE_PSK) {
 				if (memcmp(expected_hash, hash->u.hash.data, s->ike.md_len) != 0)
@@ -1811,48 +1826,52 @@ static void do_phase1_am_packet2(struct sa_block *s, const char *shared_key)
 						  val_to_string(ISAKMP_N_AUTHENTICATION_FAILED, isakmp_notify_enum_array),
 						  ISAKMP_N_AUTHENTICATION_FAILED);
 				hex_dump("received hash", hash->u.hash.data, hash->u.hash.length, NULL);
-			} else if (opt_auth_mode == AUTH_MODE_CERT ||
-					   opt_auth_mode == AUTH_MODE_HYBRID) {
-				hex_dump("received signature", sig->u.sig.data, sig->u.sig.length, NULL);
-
-				ret = crypto_verify_chain(cctx,
-										  config[CONFIG_CA_FILE],
-										  config[CONFIG_CA_DIR],
-										  &crerr);
-				if (ret)
-					crypto_call_error(crerr);
-
-				/* Verify signature */
-				rec_hash = crypto_decrypt_signature (cctx,
-													 sig->u.sig.data,
-													 sig->u.sig.length,
-													 &decr_size,
-													 CRYPTO_PAD_PKCS1,
-													 &crerr);
-				if (!rec_hash)
-					crypto_call_error(crerr);
-
-				if (decr_size != s->ike.md_len) {
-					printf("Decrypted-Size: %zd\n",decr_size);
-					hex_dump("    decr_hash", rec_hash, decr_size, NULL);
-					hex_dump("expected hash", expected_hash, s->ike.md_len, NULL);
-
-					error(2, 0, "The hash-value, which was decrypted from the received signature, and the expected hash-value differ in size.\n");
-				} else {
-					if (memcmp(rec_hash, expected_hash, decr_size) != 0) {
-						printf("Decrypted-Size: %zd\n",decr_size);
-						hex_dump("    decr_hash", rec_hash, decr_size, NULL);
-						hex_dump("expected hash", expected_hash, s->ike.md_len, NULL);
-
-						error(2, 0, "The hash-value, which was decrypted from the received signature, and the expected hash-value differ.\n");
-					} else {
-						DEBUG(3, printf("Signature MATCH!!\n"));
-					}
-				}
-				/* END - Signature Verification */
-
-				free(rec_hash);
+				// int* ourhash = hash->u.hash.data;
+				// int* theirhash = expected_hash;
+				printf("	packet 2 hash is correct! our hash is : %x, their hash is : %x \n", *(hash->u.hash.data), *(expected_hash));
 			}
+			// } else if (opt_auth_mode == AUTH_MODE_CERT ||
+			// 		   opt_auth_mode == AUTH_MODE_HYBRID) {
+			// 	hex_dump("received signature", sig->u.sig.data, sig->u.sig.length, NULL);
+
+			// 	ret = crypto_verify_chain(cctx,
+			// 							  config[CONFIG_CA_FILE],
+			// 							  config[CONFIG_CA_DIR],
+			// 							  &crerr);
+			// 	if (ret)
+			// 		crypto_call_error(crerr);
+
+			// 	/* Verify signature */
+			// 	rec_hash = crypto_decrypt_signature (cctx,
+			// 										 sig->u.sig.data,
+			// 										 sig->u.sig.length,
+			// 										 &decr_size,
+			// 										 CRYPTO_PAD_PKCS1,
+			// 										 &crerr);
+			// 	if (!rec_hash)
+			// 		crypto_call_error(crerr);
+
+			// 	if (decr_size != s->ike.md_len) {
+			// 		printf("Decrypted-Size: %zd\n",decr_size);
+			// 		hex_dump("    decr_hash", rec_hash, decr_size, NULL);
+			// 		hex_dump("expected hash", expected_hash, s->ike.md_len, NULL);
+
+			// 		error(2, 0, "The hash-value, which was decrypted from the received signature, and the expected hash-value differ in size.\n");
+			// 	} else {
+			// 		if (memcmp(rec_hash, expected_hash, decr_size) != 0) {
+			// 			printf("Decrypted-Size: %zd\n",decr_size);
+			// 			hex_dump("    decr_hash", rec_hash, decr_size, NULL);
+			// 			hex_dump("expected hash", expected_hash, s->ike.md_len, NULL);
+
+			// 			error(2, 0, "The hash-value, which was decrypted from the received signature, and the expected hash-value differ.\n");
+			// 		} else {
+			// 			DEBUG(3, printf("Signature MATCH!!\n"));
+			// 		}
+			// 	}
+			// 	/* END - Signature Verification */
+
+			// 	free(rec_hash);
+			// }
 
 			gcry_md_close(hm);
 
@@ -2061,9 +2080,19 @@ static void do_phase1_am_packet2(struct sa_block *s, const char *shared_key)
 	}
 }
 
+void simple_hexdump(const struct isakmp_packet *p2) {
+	size_t payload_size = sizeof(struct isakmp_packet);
+    const unsigned char *ptr = (const unsigned char *)p2->payload;
+	printf("	");
+    for (size_t i = 0; i < payload_size; i++) {
+        printf("%02x ", ptr[i]);
+    }
+    printf("\n");
+}
 static void do_phase1_am_packet3(struct sa_block *s, int re_key)
 {
 	DEBUGTOP(2, printf("S4.5 AM_packet3\n"));
+	printf("S4.5 AM_packet3\n");
 	/* Send final phase 1 packet.  */
 	{
 		struct isakmp_packet *p2;
@@ -2080,6 +2109,8 @@ static void do_phase1_am_packet3(struct sa_block *s, int re_key)
 		/* XXX CERT Add id(?), cert and sig here in case of cert auth */
 		p2->payload = pl = new_isakmp_data_payload(ISAKMP_PAYLOAD_HASH,
 											       s->ike.returned_hash, s->ike.md_len);
+		simple_hexdump(p2->payload);
+
 		if (!re_key) {
 			p2->payload->next = pl = new_isakmp_payload(ISAKMP_PAYLOAD_N);
 			pl->u.n.doi = ISAKMP_DOI_IPSEC;
@@ -2087,46 +2118,49 @@ static void do_phase1_am_packet3(struct sa_block *s, int re_key)
 			pl->u.n.type = ISAKMP_N_IPSEC_INITIAL_CONTACT;
 			pl->u.n.spi_length = 2 * ISAKMP_COOKIE_LENGTH;
 			pl->u.n.spi = xallocc(2 * ISAKMP_COOKIE_LENGTH);
+			printf("	pl: %x %x %x %x\n",ISAKMP_PAYLOAD_N,ISAKMP_DOI_IPSEC,ISAKMP_IPSEC_PROTO_ISAKMP,ISAKMP_N_IPSEC_INITIAL_CONTACT);
 			memcpy(pl->u.n.spi + ISAKMP_COOKIE_LENGTH * 0, s->ike.i_cookie, ISAKMP_COOKIE_LENGTH);
 			memcpy(pl->u.n.spi + ISAKMP_COOKIE_LENGTH * 1, s->ike.r_cookie, ISAKMP_COOKIE_LENGTH);
 		}
 
 		/* send PSK-hash if hybrid authentication is negotiated */
-		if (s->ike.auth_algo == IKE_AUTH_HybridInitRSA ||
-			s->ike.auth_algo == IKE_AUTH_HybridInitDSS) {
-			/* Notify - PRESHARED_KEY_HASH */
-			pl = pl->next = new_isakmp_payload(ISAKMP_PAYLOAD_N);
-			pl->u.n.doi = ISAKMP_DOI_IPSEC;
-			pl->u.n.protocol = ISAKMP_IPSEC_PROTO_ISAKMP;
-			/* Notify Message - Type: PRESHARED_KEY_HASH */
-			pl->u.n.type =  ISAKMP_N_CISCO_PRESHARED_KEY_HASH;
-			pl->u.n.spi_length = 2 * ISAKMP_COOKIE_LENGTH;
-			pl->u.n.spi = xallocc(2 * ISAKMP_COOKIE_LENGTH);
-			memcpy(pl->u.n.spi + ISAKMP_COOKIE_LENGTH * 0,
-				   s->ike.i_cookie, ISAKMP_COOKIE_LENGTH);
-			memcpy(pl->u.n.spi + ISAKMP_COOKIE_LENGTH * 1,
-				   s->ike.r_cookie, ISAKMP_COOKIE_LENGTH);
-			pl->u.n.data_length = s->ike.md_len;
-			pl->u.n.data = xallocc(pl->u.n.data_length);
-			memcpy(pl->u.n.data, s->ike.psk_hash, pl->u.n.data_length);
-			/* End Notify - PRESHARED_KEY_HASH */
-		}
+		// if (s->ike.auth_algo == IKE_AUTH_HybridInitRSA ||
+		// 	s->ike.auth_algo == IKE_AUTH_HybridInitDSS) {
+		// 	/* Notify - PRESHARED_KEY_HASH */
+		// 	pl = pl->next = new_isakmp_payload(ISAKMP_PAYLOAD_N);
+		// 	pl->u.n.doi = ISAKMP_DOI_IPSEC;
+		// 	pl->u.n.protocol = ISAKMP_IPSEC_PROTO_ISAKMP;
+		// 	/* Notify Message - Type: PRESHARED_KEY_HASH */
+		// 	pl->u.n.type =  ISAKMP_N_CISCO_PRESHARED_KEY_HASH;
+		// 	pl->u.n.spi_length = 2 * ISAKMP_COOKIE_LENGTH;
+		// 	pl->u.n.spi = xallocc(2 * ISAKMP_COOKIE_LENGTH);
+		// 	memcpy(pl->u.n.spi + ISAKMP_COOKIE_LENGTH * 0,
+		// 		   s->ike.i_cookie, ISAKMP_COOKIE_LENGTH);
+		// 	memcpy(pl->u.n.spi + ISAKMP_COOKIE_LENGTH * 1,
+		// 		   s->ike.r_cookie, ISAKMP_COOKIE_LENGTH);
+		// 	pl->u.n.data_length = s->ike.md_len;
+		// 	pl->u.n.data = xallocc(pl->u.n.data_length);
+		// 	memcpy(pl->u.n.data, s->ike.psk_hash, pl->u.n.data_length);
+		// 	/* End Notify - PRESHARED_KEY_HASH */
+		// }
 		pl = pl->next = new_isakmp_data_payload(ISAKMP_PAYLOAD_VID,
 												VID_UNKNOWN, sizeof(VID_UNKNOWN));
+		printf("	Packet3 , pl = %x\n",pl);
 		pl = pl->next = new_isakmp_data_payload(ISAKMP_PAYLOAD_VID,
 												VID_UNITY, sizeof(VID_UNITY));
+		printf("	Packet3 , pl = %x\n",pl);
 
 		/* include NAT traversal discovery payloads */
-		if (s->ike.natd_type != 0) {
-			pl = pl->next = new_isakmp_data_payload(s->ike.natd_type,
-													s->ike.natd_them, s->ike.md_len);
-			pl->next = new_isakmp_data_payload(s->ike.natd_type,
-											   s->ike.natd_us, s->ike.md_len);
-			free(s->ike.natd_us);
-			free(s->ike.natd_them);
-			s->ike.natd_us = NULL;
-			s->ike.natd_them = NULL;
-		}
+		// if (s->ike.natd_type != 0) {
+		// 	pl = pl->next = new_isakmp_data_payload(s->ike.natd_type,
+		// 											s->ike.natd_them, s->ike.md_len);
+		// 	pl->next = new_isakmp_data_payload(s->ike.natd_type,
+		// 									   s->ike.natd_us, s->ike.md_len);
+		// 	free(s->ike.natd_us);
+		// 	free(s->ike.natd_them);
+		// 	s->ike.natd_us = NULL;
+		// 	s->ike.natd_them = NULL;
+		// }
 
 		flatten_isakmp_packet(p2, &p2kt, &p2kt_len, s->ike.ivlen);
 		free_isakmp_packet(p2);
@@ -2140,6 +2174,7 @@ static void do_phase1_am_packet3(struct sa_block *s, int re_key)
 		/* Now, send that packet and receive a new one.  */
 		r_length = sendrecv(s, r_packet, sizeof(r_packet), p2kt, p2kt_len, 0);
 		free(p2kt);
+		printf("	Packet 3 sended \n");
 	}
 }
 
@@ -2157,10 +2192,13 @@ static void do_phase1_am_cleanup(struct sa_block *s)
 
 static void do_phase1_am(const char *key_id, const char *shared_key, struct sa_block *s, int re_key)
 {
+	printf("phase 1 args: \n	key_id	%x \n	shared_key	%x\n	sa_block	%x ,\n	re_key	%x \n",key_id,shared_key,s ,re_key);
 	do_phase1_am_init(s);
 	do_phase1_am_packet1(s, key_id);
 	do_phase1_am_packet2(s, shared_key);
 	do_phase1_am_packet3(s, re_key);
+	auto value_of_returned_hash = s->ike.returned_hash;
+	printf("	pharse 1 end, the return hash is : %x",value_of_returned_hash);
 	do_phase1_am_cleanup(s);
 }
 
@@ -2579,7 +2617,8 @@ static struct isakmp_attribute *make_transform_ipsec(struct sa_block *s, int dh_
 	a->af = isakmp_attr_lots;
 	a->u.lots.length = 4;
 	a->u.lots.data = xallocc(a->u.lots.length);
-	*((uint32_t *) a->u.lots.data) = htonl(2147483);
+	// *((uint32_t *) a->u.lots.data) = htonl(2147483);
+	*((uint32_t *) a->u.lots.data) = htonl(86400);
 	a = new_isakmp_attribute_16(ISAKMP_IPSEC_ATTRIB_SA_LIFE_TYPE, IPSEC_LIFE_SECONDS, a);
 
 	if (dh_group)
@@ -3310,7 +3349,7 @@ int main(int argc, char **argv)
 
 	/* initialize last set TOS value in case UDP encap used */
 	s->ipsec.current_udp_tos = 0;
-
+	printf("	Start do_config()\n");
 	do_config(argc, argv);
 
 	DEBUG(1, printf("\nvpnc version " VERSION "\n"));
@@ -3329,11 +3368,13 @@ int main(int argc, char **argv)
 	do_load_balance = 0;
 	do {
 		DEBUGTOP(2, printf("S4 do_phase1_am\n"));
+		printf("	Start do_phase1_am()\n");
+		printf("	phase 1 args: \n	key_id		config[CONFIG_IPSEC_ID]		%x \n	shared_key	config[CONFIG_IPSEC_SECRET]		%x\n	sa_block	s	%x ,\n	re_key	%x \n",config[CONFIG_IPSEC_ID],config[CONFIG_IPSEC_SECRET],s ,0);
 		do_phase1_am(config[CONFIG_IPSEC_ID], config[CONFIG_IPSEC_SECRET], s, 0);
 		DEBUGTOP(2, printf("S5 do_phase2_xauth\n"));
 		/* FIXME: Create and use a generic function in supp.[hc] */
-		if (s->ike.auth_algo >= IKE_AUTH_HybridInitRSA)
-			do_load_balance = do_phase2_xauth(s);
+		// if (s->ike.auth_algo >= IKE_AUTH_HybridInitRSA)
+		// 	do_load_balance = do_phase2_xauth(s);
 		DEBUGTOP(2, printf("S6 do_phase2_config\n"));
 		if ((opt_vendor == VENDOR_CISCO || opt_vendor == VENDOR_FORTIGATE) && (do_load_balance == 0))
 			do_load_balance = do_phase2_config(s);
