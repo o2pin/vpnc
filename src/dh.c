@@ -57,6 +57,8 @@ int dh_create_exchange(struct group *group, unsigned char *buf)
 	if (group->operation(group, group->a, group->gen, group->c))
 		return -1;
 	group->getraw(group, group->a, buf);
+	printf("Creates the exchange value we are offering to the other party.\n");
+	// hex_dump("Creates the exchange value we are offering to the other party", group, sizeof(buf), NULL);
 	return 0;
 }
 

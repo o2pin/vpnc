@@ -78,8 +78,9 @@ const supported_algo_t *get_algo(enum algo_group what, enum supp_algo_key key, i
 
 	switch (what) {
 	case SUPP_ALGO_DH_GROUP:
-		printf("	into SUPP_ALGO_DH_GROUP case\n ");
+		
 		sa = supp_dh_group;
+		printf("	get_algo 改变 supported_algo_t 的结构为 supp_dh_group \n ");
 		break;
 	case SUPP_ALGO_HASH:
 		sa = supp_hash;
@@ -116,7 +117,7 @@ const supported_algo_t *get_algo(enum algo_group what, enum supp_algo_key key, i
 			if (keylen == sa[i].keylen)
 				return sa + i;
 	}
-
+	printf("	get_algo finish\n");
 	return NULL;
 }
 

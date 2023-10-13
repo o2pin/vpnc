@@ -1286,7 +1286,7 @@ static void lifetime_ipsec_process(struct sa_block *s, struct isakmp_attribute *
 
 static void do_phase1_am_init(struct sa_block *s)
 {
-
+	printf("S4.0 AM init\n");
 	s->ike.natd_type = 0;
 	s->ike.natd_us = s->ike.natd_them = NULL;
 	s->ike.sa_f = s->ike.idi_f = NULL;
@@ -1303,8 +1303,11 @@ static void do_phase1_am_init(struct sa_block *s)
 	DEBUGTOP(2, printf("S4.2 dh setup\n"));
 	/* Set up the Diffie-Hellman stuff.  */
 	{
+		// 初始化 dh_grp
 		s->ike.dh_grp = group_get(get_dh_group_ike()->my_id);
+		// 给s->ike.dh_public 分配内存
 		s->ike.dh_public = xallocc(dh_getlen(s->ike.dh_grp));
+		// 生成 ke 值并写入 s->ike.dh_public
 		dh_create_exchange(s->ike.dh_grp, s->ike.dh_public);
 		hex_dump("dh_public", s->ike.dh_public, dh_getlen(s->ike.dh_grp), NULL);
 	}
@@ -1314,7 +1317,6 @@ static void do_phase1_am_init(struct sa_block *s)
 static void do_phase1_am_packet1(struct sa_block *s, const char *key_id)
 {
 	DEBUGTOP(2, printf("S4.3 AM packet_1\n"));
-	printf("S4.3 AM packet_1\n");
 	/* Create the first packet.  */
 	{
 		struct isakmp_packet *p1;
@@ -1326,14 +1328,19 @@ static void do_phase1_am_packet1(struct sa_block *s, const char *key_id)
 		memcpy(p1->i_cookie, s->ike.i_cookie, ISAKMP_COOKIE_LENGTH);
 		p1->isakmp_version = ISAKMP_VERSION;
 		p1->exchange_type = ISAKMP_EXCHANGE_AGGRESSIVE;
-		// 生成野蛮模式第一个包的sa
+		// 写入野蛮模式第一个包的sa
 		p1->payload = l = make_our_sa_ike();
 		flatten_isakmp_payload(l, &s->ike.sa_f, &s->ike.sa_size);
+		// dh_public & nonce 在 am_init 阶段就生成完毕
+		// 写入	ke
 		l->next = new_isakmp_data_payload(ISAKMP_PAYLOAD_KE, s->ike.dh_public, dh_getlen(s->ike.dh_grp));
+		// 写入 onoce
 		l->next->next = new_isakmp_data_payload(ISAKMP_PAYLOAD_NONCE,
 												s->ike.i_nonce, sizeof(s->ike.i_nonce));
+		// 生成id
 		l = l->next->next;
 		l->next = new_isakmp_payload(ISAKMP_PAYLOAD_ID);
+		// 附加上其他vendor (VENDOR_CISCO, id, VID_FRAG, dpd)
 		l = l->next;
 		if (opt_vendor == VENDOR_CISCO || opt_vendor == VENDOR_FORTIGATE)
 			l->u.id.type = ISAKMP_IPSEC_ID_KEY_ID;
@@ -1372,7 +1379,10 @@ static void do_phase1_am_packet1(struct sa_block *s, const char *key_id)
 			l->next = new_isakmp_data_payload(ISAKMP_PAYLOAD_VID,
 											  VID_DPD, sizeof(VID_DPD));
 		}
+
+		// 复制 p1 到 pkt
 		flatten_isakmp_packet(p1, &pkt, &pkt_len, 0);
+		// 为什么要 free
 		free_isakmp_packet(p1);
 
 		/* Now, send that packet and receive a new one.  */
@@ -1385,7 +1395,6 @@ static void do_phase1_am_packet1(struct sa_block *s, const char *key_id)
 static void do_phase1_am_packet2(struct sa_block *s, const char *shared_key)
 {
 	DEBUGTOP(2, printf("S4.4 AM_packet2\n"));
-	printf("S4.4 AM_packet2 | Decode the recieved packet.\n");
 	/* Decode the recieved packet.  */
 	{
 		int reject, ret;
@@ -1820,7 +1829,6 @@ static void do_phase1_am_packet2(struct sa_block *s, const char *shared_key)
 			gcry_md_final(hm);
 			expected_hash = gcry_md_read(hm, 0);
 			hex_dump("expected hash", expected_hash, s->ike.md_len, NULL);
-			printf("expected hash len is %#zu %zu %d \n", s->ike.md_len,s->ike.md_len,s->ike.md_len);
 			hex_dump("md_len hex value", &s->ike.md_len, sizeof(s->ike.md_len), NULL);
 
 
@@ -1832,7 +1840,7 @@ static void do_phase1_am_packet2(struct sa_block *s, const char *shared_key)
 				hex_dump("received hash", hash->u.hash.data, hash->u.hash.length, NULL);
 				// int* ourhash = hash->u.hash.data;
 				// int* theirhash = expected_hash;
-				printf("	packet 2 hash is correct! our hash is : %x, their hash is : %x \n", *(hash->u.hash.data), *(expected_hash));
+				printf("	packet 2 hash is correct!\n");
 			}
 			// } else if (opt_auth_mode == AUTH_MODE_CERT ||
 			// 		   opt_auth_mode == AUTH_MODE_HYBRID) {
@@ -2084,19 +2092,9 @@ static void do_phase1_am_packet2(struct sa_block *s, const char *shared_key)
 	}
 }
 
-void simple_hexdump(const struct isakmp_packet *p2) {
-	size_t payload_size = sizeof(struct isakmp_packet);
-    const unsigned char *ptr = (const unsigned char *)p2->payload;
-	printf("	");
-    for (size_t i = 0; i < payload_size; i++) {
-        printf("%02x ", ptr[i]);
-    }
-    printf("\n");
-}
 static void do_phase1_am_packet3(struct sa_block *s, int re_key)
 {
 	DEBUGTOP(2, printf("S4.5 AM_packet3\n"));
-	printf("S4.5 AM_packet3\n");
 	/* Send final phase 1 packet.  */
 	{
 		struct isakmp_packet *p2;
@@ -2113,8 +2111,8 @@ static void do_phase1_am_packet3(struct sa_block *s, int re_key)
 		/* XXX CERT Add id(?), cert and sig here in case of cert auth */
 		p2->payload = pl = new_isakmp_data_payload(ISAKMP_PAYLOAD_HASH,
 											       s->ike.returned_hash, s->ike.md_len);
-		simple_hexdump(p2->payload);
 
+		// 进入if
 		if (!re_key) {
 			p2->payload->next = pl = new_isakmp_payload(ISAKMP_PAYLOAD_N);
 			pl->u.n.doi = ISAKMP_DOI_IPSEC;
@@ -2122,7 +2120,6 @@ static void do_phase1_am_packet3(struct sa_block *s, int re_key)
 			pl->u.n.type = ISAKMP_N_IPSEC_INITIAL_CONTACT;
 			pl->u.n.spi_length = 2 * ISAKMP_COOKIE_LENGTH;
 			pl->u.n.spi = xallocc(2 * ISAKMP_COOKIE_LENGTH);
-			printf("	pl: %x %x %x %x\n",ISAKMP_PAYLOAD_N,ISAKMP_DOI_IPSEC,ISAKMP_IPSEC_PROTO_ISAKMP,ISAKMP_N_IPSEC_INITIAL_CONTACT);
 			memcpy(pl->u.n.spi + ISAKMP_COOKIE_LENGTH * 0, s->ike.i_cookie, ISAKMP_COOKIE_LENGTH);
 			memcpy(pl->u.n.spi + ISAKMP_COOKIE_LENGTH * 1, s->ike.r_cookie, ISAKMP_COOKIE_LENGTH);
 		}
@@ -2149,10 +2146,8 @@ static void do_phase1_am_packet3(struct sa_block *s, int re_key)
 		// }
 		pl = pl->next = new_isakmp_data_payload(ISAKMP_PAYLOAD_VID,
 												VID_UNKNOWN, sizeof(VID_UNKNOWN));
-		printf("	Packet3 , pl = %x\n",pl);
 		pl = pl->next = new_isakmp_data_payload(ISAKMP_PAYLOAD_VID,
 												VID_UNITY, sizeof(VID_UNITY));
-		printf("	Packet3 , pl = %x\n",pl);
 
 		/* include NAT traversal discovery payloads */
 		// if (s->ike.natd_type != 0) {
@@ -2185,7 +2180,6 @@ static void do_phase1_am_packet3(struct sa_block *s, int re_key)
 static void do_phase1_am_cleanup(struct sa_block *s)
 {
 	DEBUGTOP(2, printf("S4.6 cleanup\n"));
-
 	free(s->ike.psk_hash);
 	s->ike.psk_hash = NULL;
 	free(s->ike.dh_public);
@@ -2202,8 +2196,8 @@ static void do_phase1_am(const char *key_id, const char *shared_key, struct sa_b
 	do_phase1_am_packet2(s, shared_key);
 	do_phase1_am_packet3(s, re_key);
 	auto value_of_returned_hash = s->ike.returned_hash;
-	printf("	pharse 1 end, the return hash is : %x",value_of_returned_hash);
 	do_phase1_am_cleanup(s);
+	
 }
 
 static int do_phase2_notice_check(struct sa_block *s, struct isakmp_packet **r_p,
@@ -2680,8 +2674,10 @@ static void do_phase2_qm(struct sa_block *s)
 	uint8_t nonce_i[20], *dh_public = NULL;
 
 	DEBUGTOP(2, printf("S7.1 QM_packet1\n"));
+	printf("S7.1 QM_packet1\n");
 	/* Set up the Diffie-Hellman stuff.  */
 	if (get_dh_group_ipsec(s->ipsec.do_pfs)->my_id) {
+		printf("\n0\n");
 		dh_grp = group_get(get_dh_group_ipsec(s->ipsec.do_pfs)->my_id);
 		DEBUG(3, printf("len = %d\n", dh_getlen(dh_grp)));
 		dh_public = xallocc(dh_getlen(dh_grp));
@@ -2690,7 +2686,9 @@ static void do_phase2_qm(struct sa_block *s)
 	}
 
 	gcry_create_nonce((uint8_t *) &s->ipsec.rx.spi, sizeof(s->ipsec.rx.spi));
+	printf("\n1\n");
 	rp = make_our_sa_ipsec(s); /* FIXME: LEAK: allocated memory never freed */
+	printf("\n2\n");
 	gcry_create_nonce((uint8_t *) nonce_i, sizeof(nonce_i));
 	rp->next = new_isakmp_data_payload(ISAKMP_PAYLOAD_NONCE, nonce_i, sizeof(nonce_i));
 
@@ -2698,6 +2696,7 @@ static void do_phase2_qm(struct sa_block *s)
 	us->u.id.type = ISAKMP_IPSEC_ID_IPV4_ADDR;
 	us->u.id.length = 4;
 	us->u.id.data = xallocc(4);
+	printf("	do_phase2_qm pre memcpy\n");
 	memcpy(us->u.id.data, &s->our_address, sizeof(struct in_addr));
 	them = new_isakmp_payload(ISAKMP_PAYLOAD_ID);
 	them->u.id.type = ISAKMP_IPSEC_ID_IPV4_ADDR_SUBNET;
@@ -2721,6 +2720,7 @@ static void do_phase2_qm(struct sa_block *s)
 		msgid = 1;
 
 	DEBUGTOP(2, printf("S7.2 QM_packet2 send_receive\n"));
+	printf("S7.2 QM_packet2 send_receive\n");
 	sendrecv_phase2(s, rp, ISAKMP_EXCHANGE_IKE_QUICK,
 					msgid, 0, 0, 0, 0, 0);
 
@@ -2833,6 +2833,7 @@ static void do_phase2_qm(struct sa_block *s)
 					&& get_algo(SUPP_ALGO_HASH, SUPP_ALGO_IPSEC_SA, seen_auth,
 								NULL, 0) == NULL)
 					reject = ISAKMP_N_BAD_PROPOSAL_SYNTAX;
+				printf("do phase2 qm / 1\n");
 				if (reject == 0
 					&& get_algo(SUPP_ALGO_CRYPT, SUPP_ALGO_IPSEC_SA, seen_enc,
 								NULL, seen_keylen) == NULL)
@@ -3353,11 +3354,11 @@ int main(int argc, char **argv)
 
 	/* initialize last set TOS value in case UDP encap used */
 	s->ipsec.current_udp_tos = 0;
-	printf("	Start do_config()\n");
+	printf("Start do_config()\n");
 	do_config(argc, argv);
 
 	DEBUG(1, printf("\nvpnc version " VERSION "\n"));
-	hex_dump("hex_test", hex_test, sizeof(hex_test), NULL);
+	hex_dump("hex_dump_checkself", hex_test, sizeof(hex_test), NULL);
 
 	DEBUGTOP(2, printf("S1 init_sockaddr\n"));
 	init_sockaddr(&s->dst, config[CONFIG_IPSEC_GATEWAY]);
@@ -3370,26 +3371,32 @@ int main(int argc, char **argv)
 	setup_tunnel(s);
 
 	do_load_balance = 0;
-	do {
-		DEBUGTOP(2, printf("S4 do_phase1_am\n"));
-		printf("	Start do_phase1_am()\n");
-		printf("	phase 1 args: \n	key_id		config[CONFIG_IPSEC_ID]		%x \n	shared_key	config[CONFIG_IPSEC_SECRET]		%x\n	sa_block	s	%x ,\n	re_key	%x \n",config[CONFIG_IPSEC_ID],config[CONFIG_IPSEC_SECRET],s ,0);
-		do_phase1_am(config[CONFIG_IPSEC_ID], config[CONFIG_IPSEC_SECRET], s, 0);
-		// DEBUGTOP(2, printf("S5 do_phase2_xauth\n"));
-		// printf("S5 do_phase2_xauth\n");
-		/* FIXME: Create and use a generic function in supp.[hc] */
-		// if (s->ike.auth_algo >= IKE_AUTH_HybridInitRSA)
-		// 	do_load_balance = do_phase2_xauth(s);
-		DEBUGTOP(2, printf("S6 do_phase2_config\n"));
-		printf("S6 do_phase2_config\n");
-		if ((opt_vendor == VENDOR_CISCO || opt_vendor == VENDOR_FORTIGATE) && (do_load_balance == 0))
-			do_load_balance = do_phase2_config(s);
-	} while (do_load_balance);
+	do_phase1_am(config[CONFIG_IPSEC_ID], config[CONFIG_IPSEC_SECRET], s, 0);
+	// do {
+	// 	DEBUGTOP(2, printf("S4 do_phase1_am\n"));
+	// 	printf("Start do_phase1_am()\n");
+	// 	printf("	phase 1 args: \n	key_id		config[CONFIG_IPSEC_ID]		%x \n	shared_key	config[CONFIG_IPSEC_SECRET]		%x\n	sa_block	s	%x ,\n	re_key	%x \n",config[CONFIG_IPSEC_ID],config[CONFIG_IPSEC_SECRET],s ,0);
+	// 	do_phase1_am(config[CONFIG_IPSEC_ID], config[CONFIG_IPSEC_SECRET], s, 0);
+	// 	// DEBUGTOP(2, printf("S5 do_phase2_xauth\n"));
+	// 	// printf("S5 do_phase2_xauth\n");
+	// 	/* FIXME: Create and use a generic function in supp.[hc] */
+	// 	// if (s->ike.auth_algo >= IKE_AUTH_HybridInitRSA)
+	// 	// 	do_load_balance = do_phase2_xauth(s);
+	// 	DEBUGTOP(2, printf("S6 do_phase2_config\n"));
+	// 	printf("S6 do_phase2_config\n");
+	// 	if ((opt_vendor == VENDOR_CISCO || opt_vendor == VENDOR_FORTIGATE) && (do_load_balance == 0))
+	// 		printf("	do_load_balance\n");
+	// 		do_load_balance = do_phase2_config(s);
+	// } while (do_load_balance);
 	DEBUGTOP(2, printf("S7 setup_link (phase 2 + main_loop)\n"));
 	DEBUGTOP(2, printf("S7.0 run interface setup script\n"));
+	printf("S7.0 run interface setup script\n");
 	config_tunnel(s);
+	printf("Main post config_tunnel\n");
 	do_phase2_qm(s);
+	printf("Main port do_phase2_qm\n");
 	DEBUGTOP(2, printf("S7.9 main loop (receive and transmit ipsec packets)\n"));
+	printf("S7.9 main loop (receive and transmit ipsec packets)\n");
 	vpnc_doit(s);
 
 	/* Tear down phase 2 and 1 tunnels */

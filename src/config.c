@@ -97,7 +97,7 @@ void hex_dump(const char *str, const void *data, ssize_t len, const struct debug
 	if (opt_debug < 3)
 		return;
 
-	printf("   ");
+	// printf("   ");
 	switch (len) {
 	case DUMP_UINT8:
 		decodedval = val_to_string(*(uint8_t *)p, decode);
