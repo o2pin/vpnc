@@ -68,6 +68,10 @@ const unsigned char VID_UNITY[] = { /* "CISCO-UNITY"/14 + major + minor */
 	0x12, 0xF5, 0xF2, 0x8C, 0x45, 0x71, 0x68, 0xA9,
 	0x70, 0x2D, 0x9F, 0xE2, 0x74, 0xCC, 0x01, 0x00
 };
+const unsigned char VID_FRAG[] = { /* "CISCO Fragment */
+	0x40, 0x48, 0xb7, 0xd5, 0x6e, 0xbc, 0xe8, 0x85,
+	 0x25, 0xe7, 0xde, 0x7f, 0x00, 0xd6, 0xc2, 0xd3
+};
 const unsigned char VID_UNKNOWN[] = {
 	0x12, 0x6E, 0x1F, 0x57, 0x72, 0x91, 0x15, 0x3B,
 	0x20, 0x48, 0x5F, 0x7F, 0x15, 0x5B, 0x4B, 0xC8
@@ -1344,21 +1348,21 @@ static void do_phase1_am_packet1(struct sa_block *s, const char *key_id)
 		// l = l->next = new_isakmp_data_payload(ISAKMP_PAYLOAD_VID,
 		// 									  VID_XAUTH, sizeof(VID_XAUTH));
 		l = l->next = new_isakmp_data_payload(ISAKMP_PAYLOAD_VID,
-											  VID_UNITY, sizeof(VID_UNITY));
-		if ((opt_natt_mode == NATT_NORMAL) || (opt_natt_mode == NATT_FORCE)) {
-			l = l->next = new_isakmp_data_payload(ISAKMP_PAYLOAD_VID,
-												  VID_NATT_RFC, sizeof(VID_NATT_RFC));
-			l = l->next = new_isakmp_data_payload(ISAKMP_PAYLOAD_VID,
-												  VID_NATT_03, sizeof(VID_NATT_03));
-			l = l->next = new_isakmp_data_payload(ISAKMP_PAYLOAD_VID,
-												  VID_NATT_02N, sizeof(VID_NATT_02N));
-			l = l->next = new_isakmp_data_payload(ISAKMP_PAYLOAD_VID,
-												  VID_NATT_02, sizeof(VID_NATT_02));
-			l = l->next = new_isakmp_data_payload(ISAKMP_PAYLOAD_VID,
-												  VID_NATT_01, sizeof(VID_NATT_01));
-			l = l->next = new_isakmp_data_payload(ISAKMP_PAYLOAD_VID,
-												  VID_NATT_00, sizeof(VID_NATT_00));
-		}
+											  VID_FRAG, sizeof(VID_FRAG));
+		// if ((opt_natt_mode == NATT_NORMAL) || (opt_natt_mode == NATT_FORCE)) {
+		// 	l = l->next = new_isakmp_data_payload(ISAKMP_PAYLOAD_VID,
+		// 										  VID_NATT_RFC, sizeof(VID_NATT_RFC));
+		// 	l = l->next = new_isakmp_data_payload(ISAKMP_PAYLOAD_VID,
+		// 										  VID_NATT_03, sizeof(VID_NATT_03));
+		// 	l = l->next = new_isakmp_data_payload(ISAKMP_PAYLOAD_VID,
+		// 										  VID_NATT_02N, sizeof(VID_NATT_02N));
+		// 	l = l->next = new_isakmp_data_payload(ISAKMP_PAYLOAD_VID,
+		// 										  VID_NATT_02, sizeof(VID_NATT_02));
+		// 	l = l->next = new_isakmp_data_payload(ISAKMP_PAYLOAD_VID,
+		// 										  VID_NATT_01, sizeof(VID_NATT_01));
+		// 	l = l->next = new_isakmp_data_payload(ISAKMP_PAYLOAD_VID,
+		// 										  VID_NATT_00, sizeof(VID_NATT_00));
+		// }
 		s->ike.dpd_idle = atoi(config[CONFIG_DPD_IDLE]);
 		if (s->ike.dpd_idle != 0) {
 			if (s->ike.dpd_idle < 10)
@@ -3371,11 +3375,13 @@ int main(int argc, char **argv)
 		printf("	Start do_phase1_am()\n");
 		printf("	phase 1 args: \n	key_id		config[CONFIG_IPSEC_ID]		%x \n	shared_key	config[CONFIG_IPSEC_SECRET]		%x\n	sa_block	s	%x ,\n	re_key	%x \n",config[CONFIG_IPSEC_ID],config[CONFIG_IPSEC_SECRET],s ,0);
 		do_phase1_am(config[CONFIG_IPSEC_ID], config[CONFIG_IPSEC_SECRET], s, 0);
-		DEBUGTOP(2, printf("S5 do_phase2_xauth\n"));
+		// DEBUGTOP(2, printf("S5 do_phase2_xauth\n"));
+		// printf("S5 do_phase2_xauth\n");
 		/* FIXME: Create and use a generic function in supp.[hc] */
 		// if (s->ike.auth_algo >= IKE_AUTH_HybridInitRSA)
 		// 	do_load_balance = do_phase2_xauth(s);
 		DEBUGTOP(2, printf("S6 do_phase2_config\n"));
+		printf("S6 do_phase2_config\n");
 		if ((opt_vendor == VENDOR_CISCO || opt_vendor == VENDOR_FORTIGATE) && (do_load_balance == 0))
 			do_load_balance = do_phase2_config(s);
 	} while (do_load_balance);
